@@ -1,7 +1,6 @@
 package ais_plus.controller;
 
 import com.google.gson.*;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -175,68 +174,74 @@ public class AccrualFormController {
             String preCheckRequired = "";
             if (preCheckRequired_ch.isSelected()){preCheckRequired = "true";} else {preCheckRequired = "false";}
             String purpose = purpose_t.getText();
+            boolean isFieldCorrect= Check_fields(personalAccount,correspAccount,bic,kpp,inn,oktmo,cbc, urn,cbcSection);
+            if(isFieldCorrect)
+            {
+                CookieStore httpCookieStore = new BasicCookieStore();
+                Gson gson = new Gson();
+                HttpClient httpClient = null;
+                HttpClientBuilder builder = HttpClientBuilder.create().setDefaultCookieStore(httpCookieStore);
+                httpClient = builder.build();
+                String postUrl       = "http://192.168.99.91/cpgu/action/router";// put in your url
+                HttpPost post = new HttpPost(postUrl);
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("extTID", "14"));
+                params.add(new BasicNameValuePair("extAction", "paymentController"));
+                params.add(new BasicNameValuePair("extMethod", "save"));
+                params.add(new BasicNameValuePair("extType", "rpc"));
+                params.add(new BasicNameValuePair("extUpload", "false"));
+                params.add(new BasicNameValuePair("use", use));
+                params.add(new BasicNameValuePair("id", id_accr));
+                params.add(new BasicNameValuePair("lid", lid));
+                params.add(new BasicNameValuePair("eid", eid));
+                params.add(new BasicNameValuePair("idPayment", idPayment));
+                params.add(new BasicNameValuePair("displayName", displayName));
+                params.add(new BasicNameValuePair("person", person));
+                params.add(new BasicNameValuePair("soloProprietor", soloProprietor));
+                params.add(new BasicNameValuePair("legal", legal));
+                params.add(new BasicNameValuePair("hint", hint));
+                params.add(new BasicNameValuePair("name", name));
+                params.add(new BasicNameValuePair("bankName", bankName));
+                params.add(new BasicNameValuePair("personalAccount", personalAccount));
+                params.add(new BasicNameValuePair("correspAccount", correspAccount));
+                params.add(new BasicNameValuePair("bic", bic));
+                params.add(new BasicNameValuePair("codeCBC", ""));
+                params.add(new BasicNameValuePair("kpp", kpp));
+                params.add(new BasicNameValuePair("inn", inn));
+                params.add(new BasicNameValuePair("regType", regType));
+                params.add(new BasicNameValuePair("mfcsOKTMO", mfcsOKTMO));
+                params.add(new BasicNameValuePair("oktmo", oktmo));
+                params.add(new BasicNameValuePair("cbc", cbc));
+                params.add(new BasicNameValuePair("urn", urn));
+                params.add(new BasicNameValuePair("cbcSection", cbcSection));
+                params.add(new BasicNameValuePair("preCheckRequired", preCheckRequired));
+                params.add(new BasicNameValuePair("purpose", purpose));
+                post.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
+                //post.setHeader("Content-type", "application/json");
+                post.addHeader("Cookie","JSESSIONID="+cookie);
+                HttpResponse response = null;
+                try {
+                    response = httpClient.execute(post);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                HttpEntity entity = response.getEntity();
+                try {
+                    String result_add_paym=EntityUtils.toString(entity);
+                    System.out.println("Add PAYMENT: "+result_add_paym);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            CookieStore httpCookieStore = new BasicCookieStore();
-            Gson gson = new Gson();
-            HttpClient httpClient = null;
-            HttpClientBuilder builder = HttpClientBuilder.create().setDefaultCookieStore(httpCookieStore);
-            httpClient = builder.build();
-            String postUrl       = "http://192.168.99.91/cpgu/action/router";// put in your url
-            HttpPost post = new HttpPost(postUrl);
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("extTID", "14"));
-            params.add(new BasicNameValuePair("extAction", "paymentController"));
-            params.add(new BasicNameValuePair("extMethod", "save"));
-            params.add(new BasicNameValuePair("extType", "rpc"));
-            params.add(new BasicNameValuePair("extUpload", "false"));
-            params.add(new BasicNameValuePair("use", use));
-            params.add(new BasicNameValuePair("id", id_accr));
-            params.add(new BasicNameValuePair("lid", lid));
-            params.add(new BasicNameValuePair("eid", eid));
-            params.add(new BasicNameValuePair("idPayment", idPayment));
-            params.add(new BasicNameValuePair("displayName", displayName));
-            params.add(new BasicNameValuePair("person", person));
-            params.add(new BasicNameValuePair("soloProprietor", soloProprietor));
-            params.add(new BasicNameValuePair("legal", legal));
-            params.add(new BasicNameValuePair("hint", hint));
-            params.add(new BasicNameValuePair("name", name));
-            params.add(new BasicNameValuePair("bankName", bankName));
-            params.add(new BasicNameValuePair("personalAccount", personalAccount));
-            params.add(new BasicNameValuePair("correspAccount", correspAccount));
-            params.add(new BasicNameValuePair("bic", bic));
-            params.add(new BasicNameValuePair("codeCBC", ""));
-            params.add(new BasicNameValuePair("kpp", kpp));
-            params.add(new BasicNameValuePair("inn", inn));
-            params.add(new BasicNameValuePair("regType", regType));
-            params.add(new BasicNameValuePair("mfcsOKTMO", mfcsOKTMO));
-            params.add(new BasicNameValuePair("oktmo", oktmo));
-            params.add(new BasicNameValuePair("cbc", cbc));
-            params.add(new BasicNameValuePair("urn", urn));
-            params.add(new BasicNameValuePair("cbcSection", cbcSection));
-            params.add(new BasicNameValuePair("preCheckRequired", preCheckRequired));
-            params.add(new BasicNameValuePair("purpose", purpose));
-            post.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
-            //post.setHeader("Content-type", "application/json");
-            post.addHeader("Cookie","JSESSIONID="+cookie);
-            HttpResponse response = null;
-            try {
-                response = httpClient.execute(post);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            HttpEntity entity = response.getEntity();
-            try {
-                String result_add_paym=EntityUtils.toString(entity);
-                System.out.println("Add PAYMENT: "+result_add_paym);
-            } catch (IOException e) {
-                e.printStackTrace();
+                //AccrualController accrualController = new AccrualController();
+                //accrualController.Show_data_Accrual(cookie, lid, name_usl);
+                add_accul_b.getScene().getWindow().hide();
+                AccrualController accrualController = loader.getController();
+                accrualController.Update_data_Accrual(cookie, eid, lid, null);
+            } else {
+                WarningMessage();
             }
 
-            //AccrualController accrualController = new AccrualController();
-            //accrualController.Show_data_Accrual(cookie, lid, name_usl);
-            add_accul_b.getScene().getWindow().hide();
-            AccrualController accrualController = loader.getController();
-            accrualController.Update_data_Accrual(cookie, eid, lid, null);
 
         });
 
@@ -409,6 +414,31 @@ public class AccrualFormController {
         AccrualController accrualController = loader.getController();
         accrualController.Update_data_Accrual(cookie, eid, lid, null);
         return json_result;
+    }
+
+    public boolean Check_fields(String personalAccount, String correspAccount, String bic, String kpp,
+                                String inn, String oktmo, String cbc, String urn, String cbcSection)
+    {
+        if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 ||
+                kpp.length()!=9|| cbc.length()>20){
+            return false;
+        } else if (urn.length()!=0 || cbcSection.length()!=0)
+        {
+            if( urn.length()>8 || cbcSection.length()>3){ return false; } else { return true; }
+        } else { return true; }
+    }
+
+    public void WarningMessage(){
+        Alert alert =new Alert(Alert.AlertType.WARNING , "Test");
+        alert.setTitle("Проверьте правильность данных");
+        alert.setHeaderText("Введены неправильные данные!");
+        alert.setContentText("Проверьте данные!");
+        alert.showAndWait().ifPresent(rs -> {
+            if (rs == ButtonType.OK){
+
+            }
+
+        });
     }
 
 
