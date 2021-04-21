@@ -240,7 +240,10 @@ public class appController {
 
             //add your data to the table here.
             data_table_mfc.setItems(dataMfc_models);
-            Download_mfc(parsed_result_arr);
+            download_mfc_b.setOnAction(event2 -> {
+                mfcController.Download_mfc(parsed_result_arr);
+            });
+
         });
 
         search_mfc_t.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -277,205 +280,13 @@ public class appController {
 
                     //add your data to the table here.
                     data_table_mfc.setItems(dataMfc_models);
-                    Download_mfc(parsed_result_arr);
+                    download_mfc_b.setOnAction(event3 -> {
+                        mfcController.Download_mfc(parsed_result_arr);
+                    });
+
                 }
             }
         });
-    }
-
-    public void Download_uslugs(ArrayList<DataUslug_Model> dataUslug_models_arr) {
-
-        download_usl_b.setOnAction(event -> {
-            String text_test="";
-
-            for (int i=0; i<dataUslug_models_arr.size(); i++){
-                text_test+=dataUslug_models_arr.get(i).getEidUslug() +"\t"+ dataUslug_models_arr.get(i).getNameUslug()+"\n";
-            }
-            //System.out.println(text_test);
-            FileChooser fileChooser = new FileChooser();
-
-            //Set extension filter
-            fileChooser.setInitialFileName("service_report");
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-            fileChooser.getExtensionFilters().add(extFilter);
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/ais_plus/view/app.fxml"));
-            try {
-                loader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Parent root = loader.getRoot();
-            appController AppController = loader.getController();
-            Stage stage = new Stage();
-            //Show save file dialog
-            File file = fileChooser.showSaveDialog(stage);
-
-
-            if(file != null){
-                SaveFileTxt(text_test, file);
-            }
-
-        });
-    }
-
-    public void Download_departm(ArrayList<DataDepartm_Model> dataDepartm_models_arr) {
-
-        download_departm_b.setOnAction(event -> {
-            String text_test="";
-
-            for (int i=0; i<dataDepartm_models_arr.size(); i++){
-                text_test+=dataDepartm_models_arr.get(i).getIdDepartm() +"\t"+ dataDepartm_models_arr.get(i).getNameDepartm()+"\n";
-            }
-            //System.out.println(text_test);
-            FileChooser fileChooser = new FileChooser();
-
-            //Set extension filter
-            fileChooser.setInitialFileName("departm_report");
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-            fileChooser.getExtensionFilters().add(extFilter);
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/ais_plus/view/app.fxml"));
-            try {
-                loader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Parent root = loader.getRoot();
-            appController AppController = loader.getController();
-            Stage stage = new Stage();
-            //Show save file dialog
-            File file = fileChooser.showSaveDialog(stage);
-
-
-            if(file != null){
-                SaveFileTxt(text_test, file);
-            }
-
-        });
-    }
-
-    public void Download_mfc(ArrayList<DataMfc_Model> dataMfc_model_arr) {
-
-        download_mfc_b.setOnAction(event -> {
-            String text_test="";
-
-            for (int i=0; i<dataMfc_model_arr.size(); i++){
-                text_test+=dataMfc_model_arr.get(i).getIdMfc() +"\t"+ dataMfc_model_arr.get(i).getNameMfc()+"\n";
-            }
-            //System.out.println(text_test);
-            FileChooser fileChooser = new FileChooser();
-
-            //Set extension filter
-            fileChooser.setInitialFileName("mfc_report");
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-            FileChooser.ExtensionFilter extFilterExcel = new FileChooser.ExtensionFilter("XlS files (*.xls)", "*.xls");
-            fileChooser.getExtensionFilters().add(extFilter);
-            fileChooser.getExtensionFilters().add(extFilterExcel);
-
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/ais_plus/view/app.fxml"));
-            try {
-                loader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Parent root = loader.getRoot();
-            appController AppController = loader.getController();
-            Stage stage = new Stage();
-            //Show save file dialog
-            File file = fileChooser.showSaveDialog(stage);
-            //System.out.println(fileChooser.getSelectedExtensionFilter().getExtensions().toString());
-            if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.txt]")){
-                System.out.println("SELECTED TXT");
-                if(file != null){
-                    SaveFileTxt(text_test, file);
-                }
-            } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xls]")){
-                System.out.println("SELECTED XLS");
-                try {
-                    SaveFileExcel(dataMfc_model_arr, file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        });
-    }
-
-    private void SaveFileTxt(String content, File file){
-        try {
-            FileWriter fileWriter = null;
-
-            fileWriter = new FileWriter(file);
-            fileWriter.write(content);
-            fileWriter.close();
-        } catch (IOException ex) {
-            Logger.getLogger(appController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    // Excel Save
-    private static HSSFCellStyle createStyleForTitle(HSSFWorkbook workbook) {
-        HSSFFont font = workbook.createFont();
-        font.setBold(true);
-        HSSFCellStyle style = workbook.createCellStyle();
-        style.setFont(font);
-        return style;
-    }
-
-    public void SaveFileExcel (ArrayList<DataMfc_Model> dataMfc_model_arr, File file) throws IOException {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Mfc sheet");
-
-        //List<Employee> list = EmployeeDAO.listEmployees();
-
-        int rownum = 0;
-        Cell cell;
-        Row row;
-        //
-        HSSFCellStyle style = createStyleForTitle(workbook);
-
-        row = sheet.createRow(rownum);
-
-        // EmpNo
-        cell = row.createCell(0, CellType.STRING);
-        cell.setCellValue("IdMfc");
-        cell.setCellStyle(style);
-        // EmpName
-        cell = row.createCell(1, CellType.STRING);
-        cell.setCellValue("NameMfc");
-        cell.setCellStyle(style);
-
-
-        // Data
-        for (DataMfc_Model mfc_model : dataMfc_model_arr) {
-            //System.out.println(mfc_model.getIdMfc() +"\t" +mfc_model.getNameMfc());
-            rownum++;
-            row = sheet.createRow(rownum);
-
-            // IdMfc (A)
-            cell = row.createCell(0, CellType.STRING);
-            cell.setCellValue(mfc_model.getIdMfc());
-            // NameMFc (B)
-            cell = row.createCell(1, CellType.STRING);
-            cell.setCellValue(mfc_model.getNameMfc());
-
-        }
-
-        //FileOutputStream outFile = new FileOutputStream(file);
-        //workbook.write(outFile);
-        //workbook.close();
-
-        FileOutputStream outFile = new FileOutputStream(file);
-
-        workbook.write(outFile);
-        outFile.close();
-        System.out.println("Created file: " + file.getAbsolutePath());
-
     }
 
     public ArrayList<DataUslug_Model> Show_data_uslug(String cookie_value) throws IOException {
@@ -514,7 +325,10 @@ public class appController {
         //add your data to the table here.
         data_table.setItems(dataUslug_models);
         Show_uslugs(cookie_value);
-        Download_uslugs(parsed_result_arr);
+        download_usl_b.setOnAction(event -> {
+            serviceController.Download_uslugs(parsed_result_arr);
+        });
+
 
         //return parsed_result;
         return null;
@@ -554,13 +368,19 @@ public class appController {
 
                         //add your data to the table here.
                         data_table_departm.setItems(dataDepartm_models);
-                        Download_departm(parsed_result_arr);
+                        download_departm_b.setOnAction(event2 -> {
+                            departmController.Download_departm(parsed_result_arr);
+                        });
+
 
                         ///////////////////// SEARCH
-                        show_departm.setOnAction(event2 -> {
+                        show_departm.setOnAction(event3 -> {
                             ArrayList<DataDepartm_Model> parsed_result_arr_find= departmController.Search_departm(parsed_result_arr,search_departm_t.getText());
                             System.out.println("TEST SEARCH 111 "+ search_departm_t.getText());
-                            Download_departm(parsed_result_arr_find);
+                            download_departm_b.setOnAction(event4 -> {
+                                departmController.Download_departm(parsed_result_arr_find);
+                            });
+
                             count_DepartmAll_t.setText(String.valueOf(parsed_result_arr_find.size()));
 
                             data_table_departm.setPlaceholder(new Label("Ничего не найдено!"));
@@ -585,7 +405,9 @@ public class appController {
                                 if (keyEvent.getCode() == KeyCode.ENTER)  {
                                     ArrayList<DataDepartm_Model> parsed_result_arr_find= departmController.Search_departm(parsed_result_arr,search_departm_t.getText());
                                     System.out.println("TEST SEARCH 111 "+ search_departm_t.getText());
-                                    Download_departm(parsed_result_arr_find);
+                                    download_departm_b.setOnAction(event5 -> {
+                                        departmController.Download_departm(parsed_result_arr_find);
+                                    });
                                     count_DepartmAll_t.setText(String.valueOf(parsed_result_arr_find.size()));
 
                                     data_table_departm.setPlaceholder(new Label("Ничего не найдено!"));
@@ -645,7 +467,9 @@ public class appController {
                     data_table_mfc.setItems(dataMfc_models);
 
                     //set button for search
-                    Download_mfc(parsed_result_arr);
+                    download_mfc_b.setOnAction(event2 -> {
+                        mfcController.Download_mfc(parsed_result_arr);
+                    });
                     Show_mfc(cookie_value);
 
                 }
