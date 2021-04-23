@@ -2,6 +2,7 @@ package ais_plus.controller;
 
 import ais_plus.appController;
 import ais_plus.model.DataMfc_Model;
+import ais_plus.model.DataUslug_Model;
 import com.google.gson.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,12 +25,19 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -143,9 +151,11 @@ public class DepartmController {
 
             //Set extension filter
             fileChooser.setInitialFileName("departm_report");
-            FileChooser.ExtensionFilter extFilterExcel = new FileChooser.ExtensionFilter("Excel files (old format) (*.xls)", "*.xls");
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+            FileChooser.ExtensionFilter extFilterExcel = new FileChooser.ExtensionFilter("Excel file (*.xlsx)", "*.xlsx");
+            FileChooser.ExtensionFilter extFilterExcelOld = new FileChooser.ExtensionFilter("Excel file (old format) (*.xls)", "*.xls");
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT file (*.txt)", "*.txt");
             fileChooser.getExtensionFilters().add(extFilterExcel);
+            fileChooser.getExtensionFilters().add(extFilterExcelOld);
             fileChooser.getExtensionFilters().add(extFilter);
 
             FXMLLoader loader = new FXMLLoader();
@@ -160,24 +170,35 @@ public class DepartmController {
             Stage stage = new Stage();
             //Show save file dialog
             File file = fileChooser.showSaveDialog(stage);
-            if (fileChooser.getSelectedExtensionFilter()!=null){
-                if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.txt]")){
-                    System.out.println("SELECTED TXT");
-                    if(file != null){
-                        SaveFileTxt(text_test, file);
-                    }
-                } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xls]")){
-                    System.out.println("SELECTED XLS");
+        if (fileChooser.getSelectedExtensionFilter()!=null){
+            if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xlsx]")){
+                System.out.println("SELECTED XLSX");
+                if(file != null){
                     try {
-                        if(file != null){
-                            SaveFileExcel(dataDepartm_models_arr, file);
-                        }
+                        SaveFileExcel(dataDepartm_models_arr, file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
+                }
+            } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xls]")){
+                System.out.println("SELECTED XLS");
+                if(file != null){
+                    try {
+                        SaveFileExcelOldFormat(dataDepartm_models_arr, file);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
+
+            } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.txt]")){
+                System.out.println("SELECTED TXT");
+                if(file != null){
+                    SaveFileTxt(text_test, file);
+                }
+
             }
+        }
 
 
     }
@@ -196,7 +217,7 @@ public class DepartmController {
     }
 
     // Excel Save
-    private static HSSFCellStyle createStyleForTitle(HSSFWorkbook workbook) {
+    private static HSSFCellStyle createStyleForTitleOld(HSSFWorkbook workbook) {
         HSSFFont font = workbook.createFont();
         font.setBold(true);
         HSSFCellStyle style = workbook.createCellStyle();
@@ -204,7 +225,7 @@ public class DepartmController {
         return style;
     }
 
-    public void SaveFileExcel (ArrayList<DataDepartm_Model> dataDepartm_model_arr, File file) throws IOException {
+    public void SaveFileExcelOldFormat (ArrayList<DataDepartm_Model> dataDepartm_model_arr, File file) throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Departm sheet");
 
@@ -214,7 +235,7 @@ public class DepartmController {
         Cell cell;
         Row row;
         //
-        HSSFCellStyle style = createStyleForTitle(workbook);
+        HSSFCellStyle style = createStyleForTitleOld(workbook);
 
         row = sheet.createRow(rownum);
 
@@ -250,6 +271,63 @@ public class DepartmController {
         System.out.println("Created file: " + file.getAbsolutePath());
 
     }
+
+    private static XSSFCellStyle createStyleForTitleNew(XSSFWorkbook workbook) {
+        XSSFFont font = workbook.createFont();
+        font.setBold(true);
+        XSSFCellStyle style = workbook.createCellStyle();
+        style.setFont(font);
+        return style;
+    }
+
+    public void SaveFileExcel (ArrayList<DataDepartm_Model> dataDepartm_model_arr, File file) throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Departm sheet");
+
+        //List<Employee> list = EmployeeDAO.listEmployees();
+
+        int rownum = 0;
+        Cell cell;
+        Row row;
+        //
+        XSSFCellStyle style = createStyleForTitleNew(workbook);
+
+        row = sheet.createRow(rownum);
+
+        // EmpNo
+        cell = row.createCell(0, CellType.STRING);
+        cell.setCellValue("IdDepartm");
+        cell.setCellStyle(style);
+        // EmpName
+        cell = row.createCell(1, CellType.STRING);
+        cell.setCellValue("NameDepartm");
+        cell.setCellStyle(style);
+
+
+        // Data
+        for (DataDepartm_Model departm_model : dataDepartm_model_arr) {
+            //System.out.println(mfc_model.getIdMfc() +"\t" +mfc_model.getNameMfc());
+            rownum++;
+            row = sheet.createRow(rownum);
+
+            // IdMfc (A)
+            cell = row.createCell(0, CellType.STRING);
+            cell.setCellValue(departm_model.getIdDepartm());
+            // NameMFc (B)
+            cell = row.createCell(1, CellType.STRING);
+            cell.setCellValue(departm_model.getNameDepartm());
+
+        }
+
+        FileOutputStream outFile = new FileOutputStream(file);
+
+        workbook.write(outFile);
+        outFile.close();
+        System.out.println("Created file: " + file.getAbsolutePath());
+
+    }
+
+
 
 
     public class result_departm {

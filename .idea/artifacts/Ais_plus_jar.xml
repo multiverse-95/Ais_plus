@@ -3,11 +3,19 @@
     <output-path>$PROJECT_DIR$/out/artifacts/Ais_plus_jar</output-path>
     <root id="archive" name="Ais_plus.jar">
       <element id="module-output" name="Ais_plus" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../modules/httpclient-4.5.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/poi/poi-ooxml/4.0.0/poi-ooxml-4.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/poi/poi/4.0.0/poi-4.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.10/commons-codec-1.10.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-collections4/4.2/commons-collections4-4.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/poi/poi-ooxml-schemas/4.0.0/poi-ooxml-schemas-4.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/xmlbeans/xmlbeans/3.0.1/xmlbeans-3.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-compress/1.18/commons-compress-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/github/virtuald/curvesapi/1.04/curvesapi-1.04.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../modules/commons-codec-1.11.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../modules/httpcore-4.4.11.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../modules/gson-2.8.6.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../modules/commons-codec-1.11.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../modules/commons-logging-1.2.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../modules/httpclient-4.5.9.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

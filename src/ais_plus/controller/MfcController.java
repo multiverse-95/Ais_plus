@@ -1,6 +1,7 @@
 package ais_plus.controller;
 
 import ais_plus.appController;
+import ais_plus.model.DataUslug_Model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -24,6 +25,10 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -95,9 +100,11 @@ public class MfcController {
 
             //Set extension filter
             fileChooser.setInitialFileName("mfc_report");
-            FileChooser.ExtensionFilter extFilterExcel = new FileChooser.ExtensionFilter("Excel files (old format) (*.xls)", "*.xls");
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+            FileChooser.ExtensionFilter extFilterExcel = new FileChooser.ExtensionFilter("Excel file (*.xlsx)", "*.xlsx");
+            FileChooser.ExtensionFilter extFilterExcelOld = new FileChooser.ExtensionFilter("Excel file (old format) (*.xls)", "*.xls");
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT file (*.txt)", "*.txt");
             fileChooser.getExtensionFilters().add(extFilterExcel);
+            fileChooser.getExtensionFilters().add(extFilterExcelOld);
             fileChooser.getExtensionFilters().add(extFilter);
 
             FXMLLoader loader = new FXMLLoader();
@@ -113,24 +120,35 @@ public class MfcController {
             //Show save file dialog
             File file = fileChooser.showSaveDialog(stage);
 
-            if (fileChooser.getSelectedExtensionFilter()!=null){
-                if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.txt]")){
-                    System.out.println("SELECTED TXT");
-                    if(file != null){
-                        SaveFileTxt(text_test, file);
-                    }
-                } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xls]")){
-                    System.out.println("SELECTED XLS");
+        if (fileChooser.getSelectedExtensionFilter()!=null){
+            if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xlsx]")){
+                System.out.println("SELECTED XLSX");
+                if(file != null){
                     try {
-                        if(file != null){
-                            SaveFileExcel(dataMfc_model_arr, file);
-                        }
+                        SaveFileExcel(dataMfc_model_arr, file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
+                }
+            } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xls]")){
+                System.out.println("SELECTED XLS");
+                if(file != null){
+                    try {
+                        SaveFileExcelOldFormat(dataMfc_model_arr, file);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
+
+            } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.txt]")){
+                System.out.println("SELECTED TXT");
+                if(file != null){
+                    SaveFileTxt(text_test, file);
+                }
+
             }
+        }
 
     }
 
@@ -148,7 +166,7 @@ public class MfcController {
     }
 
     // Excel Save
-    private static HSSFCellStyle createStyleForTitle(HSSFWorkbook workbook) {
+    private static HSSFCellStyle createStyleForTitleOld(HSSFWorkbook workbook) {
         HSSFFont font = workbook.createFont();
         font.setBold(true);
         HSSFCellStyle style = workbook.createCellStyle();
@@ -156,7 +174,7 @@ public class MfcController {
         return style;
     }
 
-    public void SaveFileExcel (ArrayList<DataMfc_Model> dataMfc_model_arr, File file) throws IOException {
+    public void SaveFileExcelOldFormat (ArrayList<DataMfc_Model> dataMfc_model_arr, File file) throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Mfc sheet");
 
@@ -166,7 +184,62 @@ public class MfcController {
         Cell cell;
         Row row;
         //
-        HSSFCellStyle style = createStyleForTitle(workbook);
+        HSSFCellStyle style = createStyleForTitleOld(workbook);
+
+        row = sheet.createRow(rownum);
+
+        // EmpNo
+        cell = row.createCell(0, CellType.STRING);
+        cell.setCellValue("IdMfc");
+        cell.setCellStyle(style);
+        // EmpName
+        cell = row.createCell(1, CellType.STRING);
+        cell.setCellValue("NameMfc");
+        cell.setCellStyle(style);
+
+
+        // Data
+        for (DataMfc_Model mfc_model : dataMfc_model_arr) {
+            //System.out.println(mfc_model.getIdMfc() +"\t" +mfc_model.getNameMfc());
+            rownum++;
+            row = sheet.createRow(rownum);
+
+            // IdMfc (A)
+            cell = row.createCell(0, CellType.STRING);
+            cell.setCellValue(mfc_model.getIdMfc());
+            // NameMFc (B)
+            cell = row.createCell(1, CellType.STRING);
+            cell.setCellValue(mfc_model.getNameMfc());
+
+        }
+
+        FileOutputStream outFile = new FileOutputStream(file);
+
+        workbook.write(outFile);
+        outFile.close();
+        System.out.println("Created file: " + file.getAbsolutePath());
+
+    }
+
+    private static XSSFCellStyle createStyleForTitleNew(XSSFWorkbook workbook) {
+        XSSFFont font = workbook.createFont();
+        font.setBold(true);
+        XSSFCellStyle style = workbook.createCellStyle();
+        style.setFont(font);
+        return style;
+    }
+
+    public void SaveFileExcel (ArrayList<DataMfc_Model> dataMfc_model_arr, File file) throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Mfc sheet");
+
+        //List<Employee> list = EmployeeDAO.listEmployees();
+
+        int rownum = 0;
+        Cell cell;
+        Row row;
+        //
+        XSSFCellStyle style = createStyleForTitleNew(workbook);
 
         row = sheet.createRow(rownum);
 
