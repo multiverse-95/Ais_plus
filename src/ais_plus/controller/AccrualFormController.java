@@ -101,8 +101,12 @@ public class AccrualFormController {
 
     @FXML
     void initialize() throws IOException {
+        if (regType_BUD_rb.isSelected()) {
+            CheckFieldsOnChangeTextBUD();
+        }
         regType_BUD_rb.setOnAction(event -> {
             if (regType_BUD_rb.isSelected()) {
+                CheckFieldsOnChangeTextBUD();
                 regType_NOTBUD_rb.setSelected(false);
                 oktmo_eq_mfc_ch.setDisable(false);
                 oktmo_t.setDisable(false);
@@ -113,6 +117,7 @@ public class AccrualFormController {
         });
         regType_NOTBUD_rb.setOnAction(event -> {
             if (regType_NOTBUD_rb.isSelected()) {
+                CheckFieldsOnChangeTextNOTBUD();
                 regType_BUD_rb.setSelected(false);
                 oktmo_eq_mfc_ch.setSelected(false);
                 oktmo_eq_mfc_ch.setDisable(true);
@@ -420,21 +425,182 @@ public class AccrualFormController {
                                 String inn, String oktmo, String cbc, String urn, String cbcSection)
     {
         if (oktmo==null || cbc==null || urn==null || cbcSection==null ){
+            switch (inn.length()) {
+                case 10: inn_t.setStyle("");
+                    break;
+                case 12: inn_t.setStyle("");
+                    break;
+                default:
+                    inn_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
+                    return false;
+            }
             if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 || kpp.length()!=9){
+                if (personalAccount.length()!=20){ personalAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {personalAccount_t.setStyle("");}
+                if (correspAccount.length()!=20){ correspAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {correspAccount_t.setStyle("");}
+                if (bic.length()!=9){ bic_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {bic_t.setStyle("");}
+                if (kpp.length()!=9){ kpp_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {kpp_t.setStyle("");}
                 return false;
             } else {
                 return true;
             }
         } else {
-            if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 || kpp.length()!=9|| cbc.length()>20){
+            switch (inn.length()) {
+                case 10: inn_t.setStyle("");
+                    break;
+                case 12: inn_t.setStyle("");
+                    break;
+                default:
+                    inn_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
+                    return false;
+            }
+            switch (oktmo.length()) {
+                case 8: oktmo_t.setStyle("");
+                    break;
+                case 11: oktmo_t.setStyle("");
+                    break;
+                default:
+                    oktmo_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
+                    return false;
+            }
+            if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 || kpp.length()!=9 || cbc.length()>20){
+
+                if (personalAccount.length()!=20){ personalAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {personalAccount_t.setStyle("");}
+                if (correspAccount.length()!=20){ correspAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {correspAccount_t.setStyle("");}
+                if (bic.length()!=9){ bic_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {bic_t.setStyle("");}
+                if (kpp.length()!=9){ kpp_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {kpp_t.setStyle("");}
+                if (cbc.length()!=20){ cbc_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {cbc_t.setStyle("");}
                 return false;
             }
             else if (urn.length()!=0 || cbcSection.length()!=0)
             {
-                if( urn.length()>8 || cbcSection.length()>3) { return false; } else { return true; }
-            } else { return true; }
+                if( urn.length()>8 || cbcSection.length()>3) {
+                    if (urn.length()>8){ urn_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {urn_t.setStyle("");}
+                    if (cbcSection.length()>3){ cbcSection_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {cbcSection_t.setStyle("");}
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
         }
 
+    }
+
+    public void CheckFieldsOnChangeTextBUD(){
+            personalAccount_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String personalAccount=personalAccount_t.getText();
+                if (personalAccount.length()!=20){ personalAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {personalAccount_t.setStyle("");}
+            });
+            correspAccount_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String correspAccount=correspAccount_t.getText();
+                if (correspAccount.length()!=20){ correspAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {correspAccount_t.setStyle("");}
+            });
+            bic_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String bic=bic_t.getText();
+                if (bic.length()!=9){ bic_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {bic_t.setStyle("");}
+            });
+            kpp_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String kpp=kpp_t.getText();
+                if (kpp.length()!=9){ kpp_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {kpp_t.setStyle("");}
+            });
+            inn_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String inn=inn_t.getText();
+                switch (inn.length()) {
+                    case 10: inn_t.setStyle("");
+                        break;
+                    case 12: inn_t.setStyle("");
+                        break;
+                    default:
+                        inn_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
+                        break;
+                }
+            });
+            oktmo_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String oktmo=oktmo_t.getText();
+                if (oktmo!=null){
+                    switch (oktmo.length()) {
+                        case 8: oktmo_t.setStyle("");
+                            break;
+                        case 11: oktmo_t.setStyle("");
+                            break;
+                        default:
+                            oktmo_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
+                            break;
+                    }
+                }
+
+            });
+            cbc_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String cbc=cbc_t.getText();
+                if (cbc!=null){
+                    if (cbc.length()!=20){ cbc_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {cbc_t.setStyle("");}
+                }
+
+            });
+            urn_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String urn=urn_t.getText();
+                if(urn!=null){
+                    if (urn.length()!=0){
+                        if (urn.length()>8){ urn_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {urn_t.setStyle("");}
+                    }
+                }
+
+            });
+            cbcSection_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String cbcSection=cbcSection_t.getText();
+                if(cbcSection!=null){
+                    if(cbcSection.length()!=0) {
+                        if (cbcSection.length()>3){ cbcSection_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {cbcSection_t.setStyle("");}
+                    }
+                }
+
+            });
+
+
+    }
+
+    public void CheckFieldsOnChangeTextNOTBUD(){
+        personalAccount_t.textProperty().addListener((observable, oldValue, newValue) -> {
+            String personalAccount=personalAccount_t.getText();
+            if (personalAccount.length()!=20){ personalAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {personalAccount_t.setStyle("");}
+        });
+        correspAccount_t.textProperty().addListener((observable, oldValue, newValue) -> {
+            String correspAccount=correspAccount_t.getText();
+            if (correspAccount.length()!=20){ correspAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {correspAccount_t.setStyle("");}
+        });
+        bic_t.textProperty().addListener((observable, oldValue, newValue) -> {
+            String bic=bic_t.getText();
+            if (bic.length()!=9){ bic_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {bic_t.setStyle("");}
+        });
+        kpp_t.textProperty().addListener((observable, oldValue, newValue) -> {
+            String kpp=kpp_t.getText();
+            if (kpp.length()!=9){ kpp_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {kpp_t.setStyle("");}
+        });
+        inn_t.textProperty().addListener((observable, oldValue, newValue) -> {
+            String inn=inn_t.getText();
+            switch (inn.length()) {
+                case 10: inn_t.setStyle("");
+                    break;
+                case 12: inn_t.setStyle("");
+                    break;
+                default:
+                    inn_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
+                    break;
+            }
+        });
+        oktmo_t.textProperty().addListener((observable, oldValue, newValue) -> {
+
+        });
+        cbc_t.textProperty().addListener((observable, oldValue, newValue) -> {
+
+        });
+        urn_t.textProperty().addListener((observable, oldValue, newValue) -> {
+
+        });
+        cbcSection_t.textProperty().addListener((observable, oldValue, newValue) -> {
+
+        });
     }
 
     public void WarningMessage(){
