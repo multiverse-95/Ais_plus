@@ -419,13 +419,22 @@ public class AccrualFormController {
     public boolean Check_fields(String personalAccount, String correspAccount, String bic, String kpp,
                                 String inn, String oktmo, String cbc, String urn, String cbcSection)
     {
-        if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 ||
-                kpp.length()!=9|| cbc.length()>20){
-            return false;
-        } else if (urn.length()!=0 || cbcSection.length()!=0)
-        {
-            if( urn.length()>8 || cbcSection.length()>3){ return false; } else { return true; }
-        } else { return true; }
+        if (oktmo==null || cbc==null || urn==null || cbcSection==null ){
+            if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 || kpp.length()!=9){
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 || kpp.length()!=9|| cbc.length()>20){
+                return false;
+            }
+            else if (urn.length()!=0 || cbcSection.length()!=0)
+            {
+                if( urn.length()>8 || cbcSection.length()>3) { return false; } else { return true; }
+            } else { return true; }
+        }
+
     }
 
     public void WarningMessage(){
