@@ -424,7 +424,17 @@ public class AccrualFormController {
     public boolean Check_fields(String personalAccount, String correspAccount, String bic, String kpp,
                                 String inn, String oktmo, String cbc, String urn, String cbcSection)
     {
+        boolean isValid=false;
+        ArrayList<Boolean> isValidArray=new ArrayList<Boolean>();
         if (oktmo==null || cbc==null || urn==null || cbcSection==null ){
+            if (oktmo==null){
+                oktmo_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
+                isValidArray.add(false);
+            }
+            if (cbc==null){
+                cbc_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
+                isValidArray.add(false);
+            }
             switch (inn.length()) {
                 case 10: inn_t.setStyle("");
                     break;
@@ -432,16 +442,18 @@ public class AccrualFormController {
                     break;
                 default:
                     inn_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
-                    return false;
+                    isValidArray.add(false);
+                    break;
             }
             if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 || kpp.length()!=9){
                 if (personalAccount.length()!=20){ personalAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {personalAccount_t.setStyle("");}
                 if (correspAccount.length()!=20){ correspAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {correspAccount_t.setStyle("");}
                 if (bic.length()!=9){ bic_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {bic_t.setStyle("");}
                 if (kpp.length()!=9){ kpp_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {kpp_t.setStyle("");}
-                return false;
+                isValidArray.add(false);
             } else {
-                return true;
+                isValidArray.add(true);
+                //return true;
             }
         } else {
             switch (inn.length()) {
@@ -451,7 +463,8 @@ public class AccrualFormController {
                     break;
                 default:
                     inn_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
-                    return false;
+                    isValidArray.add(false);
+                    break;
             }
             switch (oktmo.length()) {
                 case 8: oktmo_t.setStyle("");
@@ -460,31 +473,47 @@ public class AccrualFormController {
                     break;
                 default:
                     oktmo_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
-                    return false;
+                    isValidArray.add(false);
+                    break;
             }
-            if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 || kpp.length()!=9 || cbc.length()>20){
+            if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 || kpp.length()!=9 || cbc.length()>20 || cbc.length()==0){
 
                 if (personalAccount.length()!=20){ personalAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {personalAccount_t.setStyle("");}
                 if (correspAccount.length()!=20){ correspAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {correspAccount_t.setStyle("");}
                 if (bic.length()!=9){ bic_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {bic_t.setStyle("");}
                 if (kpp.length()!=9){ kpp_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {kpp_t.setStyle("");}
-                if (cbc.length()!=20){ cbc_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {cbc_t.setStyle("");}
-                return false;
+                if (cbc.length()==0){ cbc_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");}
+                else if (cbc.length()>20){ cbc_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {cbc_t.setStyle("");}
+                isValidArray.add(false);
+                //return false;
             }
             else if (urn.length()!=0 || cbcSection.length()!=0)
             {
                 if( urn.length()>8 || cbcSection.length()>3) {
                     if (urn.length()>8){ urn_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {urn_t.setStyle("");}
                     if (cbcSection.length()>3){ cbcSection_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {cbcSection_t.setStyle("");}
-                    return false;
+                    isValidArray.add(false);
+                    //return false;
                 } else {
-                    return true;
+                    isValidArray.add(true);
+                    //return true;
                 }
             } else {
-                return true;
+                isValidArray.add(true);
+                //return true;
             }
         }
 
+        for (int i=0; i<isValidArray.size(); i++) {
+            if (isValidArray.get(i)==false){
+                isValid=false;
+                break;
+            } else {
+                isValid=true;
+            }
+
+        }
+        return  isValid;
     }
 
     public void CheckFieldsOnChangeTextBUD(){
@@ -534,7 +563,8 @@ public class AccrualFormController {
             cbc_t.textProperty().addListener((observable, oldValue, newValue) -> {
                 String cbc=cbc_t.getText();
                 if (cbc!=null){
-                    if (cbc.length()!=20){ cbc_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {cbc_t.setStyle("");}
+                    if (cbc.length()==0){ cbc_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");}
+                    else if (cbc.length()>20){ cbc_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {cbc_t.setStyle("");}
                 }
 
             });
