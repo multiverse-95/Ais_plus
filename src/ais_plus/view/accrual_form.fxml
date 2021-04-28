@@ -19,7 +19,7 @@
       <Label layoutX="136.0" layoutY="59.0" text="*Код" />
       <TextField fx:id="idPayment_t" layoutX="178.0" layoutY="55.0" prefHeight="25.0" prefWidth="327.0" promptText="Введите код для начисления" />
       <Label layoutX="56.0" layoutY="90.0" prefHeight="35.0" prefWidth="111.0" text="*Наим. начисления" />
-      <TextField fx:id="displayName_t" layoutX="178.0" layoutY="95.0" prefHeight="25.0" prefWidth="327.0" promptText="Введите наименование начисления" text="Отдел_тест" />
+      <TextField fx:id="displayName_t" layoutX="178.0" layoutY="95.0" prefHeight="25.0" prefWidth="327.0" promptText="Введите наименование начисления" />
       <Label layoutX="31.0" layoutY="133.0" text="*Доступн. типы заявит." />
       <CheckBox fx:id="phys_per_ch" layoutX="178.0" layoutY="133.0" mnemonicParsing="false" selected="true" text="Физическое лицо" />
       <CheckBox fx:id="indiv_enterp_ch" layoutX="178.0" layoutY="159.0" mnemonicParsing="false" text="Индивидуальный предприниматель" />
@@ -32,9 +32,9 @@
          </font>
       </Label>
       <Label layoutX="22.0" layoutY="290.0" text="*Наимен. получат. платежа" wrapText="true" />
-      <TextField fx:id="name_t" layoutX="178.0" layoutY="286.0" prefHeight="25.0" prefWidth="327.0" promptText="Введите получателя платежа" text="УФК ТЕСТ" />
+      <TextField fx:id="name_t" layoutX="178.0" layoutY="286.0" prefHeight="25.0" prefWidth="327.0" promptText="Введите получателя платежа" />
       <Label layoutX="59.0" layoutY="330.0" text="*Наим. банка получ." />
-      <TextField fx:id="bankName_t" layoutX="178.0" layoutY="326.0" prefHeight="25.0" prefWidth="327.0" promptText="Введите имя банка получателя" text="Отделение тест" />
+      <TextField fx:id="bankName_t" layoutX="178.0" layoutY="326.0" prefHeight="25.0" prefWidth="327.0" promptText="Введите имя банка получателя" />
       <Label layoutX="58.0" layoutY="364.0" text="*Номер счета получ." />
       <TextField fx:id="personalAccount_t" layoutX="178.0" layoutY="360.0" prefHeight="25.0" prefWidth="327.0" promptText="Введите 20 цифр" />
       <Label layoutX="51.0" layoutY="397.0" text="Кор. счет банка получ." />
@@ -58,7 +58,7 @@
       <Label layoutX="101.0" layoutY="775.0" text="*Назначение" />
       <Button fx:id="add_accul_b" layoutX="367.0" layoutY="838.0" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Добавить" />
       <Button fx:id="cancel_accul_b" layoutX="451.0" layoutY="838.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="69.0" style="-fx-background-radius: 20;" text="Отмена" />
-      <TextArea fx:id="purpose_t" layoutX="185.0" layoutY="775.0" prefHeight="48.0" prefWidth="327.0" promptText="Введите назначение для платежа" text="Гос_тест тест" />
+      <TextArea fx:id="purpose_t" layoutX="185.0" layoutY="775.0" prefHeight="48.0" prefWidth="327.0" promptText="Введите назначение для платежа" />
       <Label layoutX="133.0" layoutY="505.0" text="*ИНН" />
       <TextField fx:id="inn_t" layoutX="179.0" layoutY="501.0" prefHeight="25.0" prefWidth="327.0" promptText="Введите 10 или 12 цифр" />
       <RadioButton fx:id="regType_BUD_rb" layoutX="183.0" layoutY="535.0" mnemonicParsing="false" selected="true" text="Бюджетный платеж" />

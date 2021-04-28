@@ -110,9 +110,13 @@ public class AccrualFormController {
                 regType_NOTBUD_rb.setSelected(false);
                 oktmo_eq_mfc_ch.setDisable(false);
                 oktmo_t.setDisable(false);
+                oktmo_t.setText("");
                 cbc_t.setDisable(false);
+                cbc_t.setText("");
                 urn_t.setDisable(false);
+                urn_t.setText("");
                 cbcSection_t.setDisable(false);
+                cbcSection_t.setText("");
             }
         });
         regType_NOTBUD_rb.setOnAction(event -> {
@@ -179,7 +183,7 @@ public class AccrualFormController {
             String preCheckRequired = "";
             if (preCheckRequired_ch.isSelected()){preCheckRequired = "true";} else {preCheckRequired = "false";}
             String purpose = purpose_t.getText();
-            boolean isFieldCorrect= Check_fields(personalAccount,correspAccount,bic,kpp,inn,oktmo,cbc, urn,cbcSection);
+            boolean isFieldCorrect= Check_fields(idPayment,displayName, name, bankName,personalAccount,correspAccount,bic,kpp,inn,oktmo,cbc, urn,cbcSection, purpose);
             if(isFieldCorrect)
             {
                 CookieStore httpCookieStore = new BasicCookieStore();
@@ -421,20 +425,12 @@ public class AccrualFormController {
         return json_result;
     }
 
-    public boolean Check_fields(String personalAccount, String correspAccount, String bic, String kpp,
-                                String inn, String oktmo, String cbc, String urn, String cbcSection)
+    public boolean Check_fields(String idPayment, String displayName, String name, String bankName, String personalAccount, String correspAccount, String bic, String kpp,
+                                String inn, String oktmo, String cbc, String urn, String cbcSection, String purpose)
     {
         boolean isValid=false;
         ArrayList<Boolean> isValidArray=new ArrayList<Boolean>();
         if (oktmo==null || cbc==null || urn==null || cbcSection==null ){
-            if (oktmo==null){
-                oktmo_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
-                isValidArray.add(false);
-            }
-            if (cbc==null){
-                cbc_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
-                isValidArray.add(false);
-            }
             switch (inn.length()) {
                 case 10: inn_t.setStyle("");
                     break;
@@ -445,6 +441,15 @@ public class AccrualFormController {
                     isValidArray.add(false);
                     break;
             }
+            if (idPayment.length()==0 || displayName.length()==0 || name.length()==0 || bankName.length()==0 || purpose.length()==0){
+                if (idPayment.length()==0){ idPayment_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {idPayment_t.setStyle("");}
+                if (displayName.length()==0){ displayName_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {displayName_t.setStyle("");}
+                if (name.length()==0){ name_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {name_t.setStyle("");}
+                if (bankName.length()==0){ bankName_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {bankName_t.setStyle("");}
+                if (purpose.length()==0){ purpose_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {purpose_t.setStyle("");}
+                isValidArray.add(false);
+            }
+
             if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 || kpp.length()!=9){
                 if (personalAccount.length()!=20){ personalAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {personalAccount_t.setStyle("");}
                 if (correspAccount.length()!=20){ correspAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {correspAccount_t.setStyle("");}
@@ -475,6 +480,14 @@ public class AccrualFormController {
                     oktmo_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");
                     isValidArray.add(false);
                     break;
+            }
+            if (idPayment.length()==0 || displayName.length()==0 || name.length()==0 || bankName.length()==0 || purpose.length()==0){
+                if (idPayment.length()==0){ idPayment_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {idPayment_t.setStyle("");}
+                if (displayName.length()==0){ displayName_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {displayName_t.setStyle("");}
+                if (name.length()==0){ name_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {name_t.setStyle("");}
+                if (bankName.length()==0){ bankName_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {bankName_t.setStyle("");}
+                if (purpose.length()==0){ purpose_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {purpose_t.setStyle("");}
+                isValidArray.add(false);
             }
             if (personalAccount.length()!=20 || correspAccount.length()!=20 ||  bic.length()!=9 || kpp.length()!=9 || cbc.length()>20 || cbc.length()==0){
 
@@ -517,6 +530,26 @@ public class AccrualFormController {
     }
 
     public void CheckFieldsOnChangeTextBUD(){
+            idPayment_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String idPayment=idPayment_t.getText();
+                if (idPayment.length()==0){ idPayment_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {idPayment_t.setStyle("");}
+            });
+            displayName_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String displayName=displayName_t.getText();
+                if (displayName.length()==0){ displayName_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {displayName_t.setStyle("");}
+            });
+            name_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String name=name_t.getText();
+                if (name.length()==0){ name_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {name_t.setStyle("");}
+            });
+            bankName_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String bankName=bankName_t.getText();
+                if (bankName.length()==0){ bankName_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {bankName_t.setStyle("");}
+            });
+            purpose_t.textProperty().addListener((observable, oldValue, newValue) -> {
+                String purpose=purpose_t.getText();
+                if (purpose.length()==0){ purpose_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {purpose_t.setStyle("");}
+            });
             personalAccount_t.textProperty().addListener((observable, oldValue, newValue) -> {
                 String personalAccount=personalAccount_t.getText();
                 if (personalAccount.length()!=20){ personalAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {personalAccount_t.setStyle("");}
@@ -586,11 +619,29 @@ public class AccrualFormController {
                 }
 
             });
-
-
     }
 
     public void CheckFieldsOnChangeTextNOTBUD(){
+        idPayment_t.textProperty().addListener((observable, oldValue, newValue) -> {
+            String idPayment=idPayment_t.getText();
+            if (idPayment.length()==0){ idPayment_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {idPayment_t.setStyle("");}
+        });
+        displayName_t.textProperty().addListener((observable, oldValue, newValue) -> {
+            String displayName=displayName_t.getText();
+            if (displayName.length()==0){ displayName_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {displayName_t.setStyle("");}
+        });
+        name_t.textProperty().addListener((observable, oldValue, newValue) -> {
+            String name=name_t.getText();
+            if (name.length()==0){ name_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {name_t.setStyle("");}
+        });
+        bankName_t.textProperty().addListener((observable, oldValue, newValue) -> {
+            String bankName=bankName_t.getText();
+            if (bankName.length()==0){ bankName_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {bankName_t.setStyle("");}
+        });
+        purpose_t.textProperty().addListener((observable, oldValue, newValue) -> {
+            String purpose=purpose_t.getText();
+            if (purpose.length()==0){ purpose_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {purpose_t.setStyle("");}
+        });
         personalAccount_t.textProperty().addListener((observable, oldValue, newValue) -> {
             String personalAccount=personalAccount_t.getText();
             if (personalAccount.length()!=20){ personalAccount_t.setStyle("-fx-background-color: #FFF0F0;-fx-border-color: #DBB1B1;");} else {personalAccount_t.setStyle("");}
