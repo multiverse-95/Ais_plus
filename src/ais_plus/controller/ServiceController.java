@@ -37,29 +37,31 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+// Контроллер для услуг
 public class ServiceController {
-
+    // Функция получения данных по услугам
     public String Get_data_uslug(String cookie, String search_text, int limit_usl) throws IOException {
 
-
+        // Хранилище куки
         CookieStore httpCookieStore = new BasicCookieStore();
         Gson gson = new Gson();
-
+        // Создание экземпляра класса для payload услуг
         Payload_uslug payload_uslug =new Payload_uslug();
+        // Создание экземпляра класса для data услуг
         Data_uslug data_uslugs = new Data_uslug();
+        // Создание экземпляра класса для сортировки услуг
         Sort_uslug sort_uslug = new Sort_uslug();
 
         ArrayList<String> null_numb = new ArrayList<String>();
-        ArrayList<Data_uslug> data_uslug = new ArrayList<Data_uslug>();
-        ArrayList<Sort_uslug> sort_usl = new ArrayList<Sort_uslug>();
+        ArrayList<Data_uslug> data_uslug = new ArrayList<Data_uslug>(); // Список для данных услуг
+        ArrayList<Sort_uslug> sort_usl = new ArrayList<Sort_uslug>(); // Список для сортировки услуг
 
-        // Add value for sort_uslug
+        // Данные для сортировки услуг
         sort_uslug.property="title";
         sort_uslug.direction="ASC";
         sort_usl.add(sort_uslug);
 
-        // Add value for data_uslug
+        // Основные данные для data услуг
         data_uslugs.serviceType = null;
         data_uslugs.requesterType = null;
         data_uslugs.departmentFilter = null;
@@ -70,7 +72,7 @@ public class ServiceController {
         data_uslugs.sort = sort_usl;
         data_uslug.add(data_uslugs);
 
-        // Add value for payload_uslug
+        // Основные данные для payload услуг
         payload_uslug.action ="customServiceInfoService";
         payload_uslug.method ="getCustomServices";
         payload_uslug.data =data_uslug;
@@ -78,59 +80,63 @@ public class ServiceController {
         payload_uslug.tid =11;
 
 
-        String postUrl       = "http://192.168.99.91/cpgu/action/router";// put in your url
+        String postUrl       = "http://192.168.99.91/cpgu/action/router";// Адрес запроса
 
         HttpClient httpClient = null;
         HttpClientBuilder builder = HttpClientBuilder.create().setDefaultCookieStore(httpCookieStore);
         httpClient = builder.build();
         HttpPost post          = new HttpPost(postUrl);
-        StringEntity postingString = new StringEntity(gson.toJson(payload_uslug), "UTF-8");//gson.tojson() converts your payload to json
+        StringEntity postingString = new StringEntity(gson.toJson(payload_uslug), "UTF-8"); //Конвертирование данных в json, в кодировке UTF-8
         post.setEntity(postingString);
         post.setHeader("Content-type", "application/json;charset=UTF-8");
-        post.addHeader("Cookie","JSESSIONID="+cookie);
-        HttpResponse response = httpClient.execute(post);
+        post.addHeader("Cookie","JSESSIONID="+cookie); // Добавление куки в Header
+        HttpResponse response = httpClient.execute(post); // Выполнение post запроса
         HttpEntity entity = response.getEntity();
         System.out.println(gson.toJson(payload_uslug));
         //System.out.println(EntityUtils.toString(entity));
         return EntityUtils.toString(entity);
         //return gson.toJson(payload_uslug);
     }
-
+    // Функция для получения количества всех услуг на сервере
     public int Total_usl_from_serv(String json){
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(json);
         JsonArray jsonArray =element.getAsJsonArray();
         JsonObject jsonObject = jsonArray.get(0).getAsJsonObject();
-        JsonObject result = jsonObject.get("result").getAsJsonObject();
-        JsonArray records= result.get("records").getAsJsonArray();
+        JsonObject result = jsonObject.get("result").getAsJsonObject(); // Получение объекта result
+        JsonArray records= result.get("records").getAsJsonArray(); // Получение массива records
         String title_usl="";
-        int limit_usl_fromServer=jsonObject.get("result").getAsJsonObject().get("total").getAsInt();
+        int limit_usl_fromServer=jsonObject.get("result").getAsJsonObject().get("total").getAsInt(); // Получение количества услуг
         if (limit_usl_fromServer==0) limit_usl_fromServer=25;
         return limit_usl_fromServer;
     }
-
+    // Функция для парсинга данных с услуг
     public result_service Parsing_json_uslug(String json, int limit_usl, boolean isCheckBox_check) throws IOException {
 
-
+        // Создания экземпляра парсинга
         JsonParser parser = new JsonParser();
-        JsonElement element = parser.parse(json);
-        JsonArray jsonArray =element.getAsJsonArray();
-        JsonObject jsonObject = jsonArray.get(0).getAsJsonObject();
-        JsonObject result = jsonObject.get("result").getAsJsonObject();
-        JsonArray records= result.get("records").getAsJsonArray();
+        JsonElement element = parser.parse(json); // Получение главного элемента
+        JsonArray jsonArray =element.getAsJsonArray(); // Получение массива элеменнтов
+        JsonObject jsonObject = jsonArray.get(0).getAsJsonObject(); // Получение первого элемента из массива
+        JsonObject result = jsonObject.get("result").getAsJsonObject(); // Получение элемента result
+        JsonArray records= result.get("records").getAsJsonArray(); // Получение массива records
         String title_usl="";
-        int limit_usl_fromServer=jsonObject.get("result").getAsJsonObject().get("total").getAsInt();
+        int limit_usl_fromServer=jsonObject.get("result").getAsJsonObject().get("total").getAsInt(); // Получение количества всех услуг
         System.out.println("Total "+limit_usl_fromServer);
+        // Создание списка услуг
         ArrayList<DataUslug_Model> dataUslug_models_arr = new ArrayList<DataUslug_Model>();
-        int SumAllUslug =limit_usl_fromServer;
+        int SumAllUslug =limit_usl_fromServer; // Сумма всех услуг
         int SumActualUslug =0;
 
-
+        // Если количество услуг больше, чем на сервере
         if (limit_usl>limit_usl_fromServer){
-            limit_usl=limit_usl_fromServer;
+            limit_usl=limit_usl_fromServer; // Присвоить лимит услуг лимитом услуг с сервера
             System.out.println("LIMIT_USLUG_OUT "+limit_usl);
+            // Проверка чекбокса
             if (isCheckBox_check){
+                // Если выбран чекбокс только актуальные услуги
                 System.out.println("CheckBox is selected! >");
+                // Идем по циклу и добавляем в список услуг только актуальные услуги
                 for (int i=0; i<limit_usl; i++){
                     if(!records.get(i).getAsJsonObject().get("notRender").getAsBoolean()){
                         SumActualUslug++;
@@ -141,6 +147,7 @@ public class ServiceController {
                 }
 
             } else {
+                // Если чекбокс не выбран то добавляем все услуги
                 System.out.println("CheckBox is NOT selected! <");
                 for (int i=0; i<limit_usl; i++){
                     if(!records.get(i).getAsJsonObject().get("notRender").getAsBoolean()){
@@ -153,10 +160,12 @@ public class ServiceController {
                 }
             }
 
-        } else {
+        } else { // Если количество услуг меньше, чем на сервере
             if (isCheckBox_check){
+                // Если выбран чекбокс только актуальные услуги
                 System.out.println("CheckBox is selected! <");
                 for (int i=0; i<limit_usl; i++){
+                    // Идем по циклу и добавляем в список услуг только актуальные услуги
                     if(!records.get(i).getAsJsonObject().get("notRender").getAsBoolean()){
                         SumActualUslug++;
                         dataUslug_models_arr.add(new DataUslug_Model(records.get(i).getAsJsonObject().get("id").getAsJsonObject().get("eid").getAsString(),
@@ -166,7 +175,7 @@ public class ServiceController {
 
                 }
 
-            } else {
+            } else { // Если чекбокс не выбран то добавляем все услуги
                 System.out.println("CheckBox is NOT selected! <");
                 for (int i=0; i<limit_usl; i++){
                     if(!records.get(i).getAsJsonObject().get("notRender").getAsBoolean()){
@@ -178,25 +187,30 @@ public class ServiceController {
                 }
             }
         }
-
+        // Возвращаем список всех услуг, кол-во всех услуг, кол-во актуальных услуг
         return new result_service(dataUslug_models_arr, SumAllUslug, SumActualUslug);
     }
-
+    // Функция для загрузки отчета по услугам
     public void Download_uslugs(ArrayList<DataUslug_Model> dataUslug_models_arr) {
 
-            String text_test="";
-
+            String text_test=""; // Переменная в которой будет храниться текст отчета
+            // Идем по циклу и добавляем в переменную данные об услугах
             for (int i=0; i<dataUslug_models_arr.size(); i++){
                 text_test+=dataUslug_models_arr.get(i).getEidUslug() +"\t"+ dataUslug_models_arr.get(i).getNameUslug()+"\n";
             }
             //System.out.println(text_test);
+            // Создание экземпляр класса FileChooser
             FileChooser fileChooser = new FileChooser();
 
-            //Set extension filter
-            fileChooser.setInitialFileName("service_report");
+            // Устанавливаем список расширений для файла
+            fileChooser.setInitialFileName("service_report"); // Устанавливаем название для файла
+            // Список расширений для Excel
             FileChooser.ExtensionFilter extFilterExcel = new FileChooser.ExtensionFilter("Excel file (*.xlsx)", "*.xlsx");
+            // Список расширений для Excel (старый формат)
             FileChooser.ExtensionFilter extFilterExcelOld = new FileChooser.ExtensionFilter("Excel file (old format) (*.xls)", "*.xls");
+            // Список расширений для txt
             FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT file (*.txt)", "*.txt");
+            // Добавляем список расширений
             fileChooser.getExtensionFilters().add(extFilterExcel);
             fileChooser.getExtensionFilters().add(extFilterExcelOld);
             fileChooser.getExtensionFilters().add(extFilter);
@@ -211,32 +225,42 @@ public class ServiceController {
             Parent root = loader.getRoot();
             appController AppController = loader.getController();
             Stage stage = new Stage();
-            //Show save file dialog
+            // Показываем диалоговое окно для сохранения файла
             File file = fileChooser.showSaveDialog(stage);
+            // Если не нажать кнопка "Отмена"
             if (fileChooser.getSelectedExtensionFilter()!=null){
+                // Если выбрано расширение для Excel
                 if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xlsx]")){
                     System.out.println("SELECTED XLSX");
+                    // Если файл не пустой
                     if(file != null){
                         try {
+                            // Сохраняем файл
                             SaveFileExcel(dataUslug_models_arr, file);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
 
                     }
-                } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xls]")){
+                } // Иначе если выбрано расширение для старого формата Excel
+                else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xls]")){
                     System.out.println("SELECTED XLS");
+                        // Если файл не пустой
                         if(file != null){
                             try {
+                                // Сохраняем файл
                                 SaveFileExcelOldFormat(dataUslug_models_arr, file);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         }
 
-                } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.txt]")){
+                } // Иначе если выбрано расширение для txt
+                else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.txt]")){
                     System.out.println("SELECTED TXT");
+                    // Если файл не пустой
                     if(file != null){
+                        // Сохраняем файл
                         SaveFileTxt(text_test, file);
                     }
 
@@ -245,7 +269,7 @@ public class ServiceController {
 
 
     }
-
+    // Функция сохранения файла в txt
     private void SaveFileTxt(String content, File file){
         try {
             FileWriter fileWriter = null;
@@ -259,7 +283,7 @@ public class ServiceController {
 
     }
 
-    // Excel Save
+    // Функция для установки стилей Excel старый формат
     private static HSSFCellStyle createStyleForTitleOld(HSSFWorkbook workbook) {
         HSSFFont font = workbook.createFont();
         font.setBold(true);
@@ -267,9 +291,11 @@ public class ServiceController {
         style.setFont(font);
         return style;
     }
-
+    // Функция сохранения файла в Excel старый формат
     public void SaveFileExcelOldFormat (ArrayList<DataUslug_Model> dataUslug_model_arr, File file) throws IOException {
+        // Создание книги Excel
         HSSFWorkbook workbook = new HSSFWorkbook();
+        // Создание листа
         HSSFSheet sheet = workbook.createSheet("Service sheet");
 
         //List<Employee> list = EmployeeDAO.listEmployees();
@@ -277,44 +303,45 @@ public class ServiceController {
         int rownum = 0;
         Cell cell;
         Row row;
-        //
+        // Установка стилей для книги
         HSSFCellStyle style = createStyleForTitleOld(workbook);
 
         row = sheet.createRow(rownum);
 
-        // EmpNo
+        // Создание столбца EidUslug
         cell = row.createCell(0, CellType.STRING);
         cell.setCellValue("EidUslug");
         cell.setCellStyle(style);
-        // EmpName
+        // Создание столбца названия услуги
         cell = row.createCell(1, CellType.STRING);
         cell.setCellValue("NameUslug");
         cell.setCellStyle(style);
 
 
-        // Data
+        // Перебор по данным
         for (DataUslug_Model uslug_model : dataUslug_model_arr) {
             //System.out.println(mfc_model.getIdMfc() +"\t" +mfc_model.getNameMfc());
             rownum++;
             row = sheet.createRow(rownum);
 
-            // IdMfc (A)
+            // Запись Eid Услуги
             cell = row.createCell(0, CellType.STRING);
             cell.setCellValue(uslug_model.getEidUslug());
-            // NameMFc (B)
+            // Запись Названия Услуги
             cell = row.createCell(1, CellType.STRING);
             cell.setCellValue(uslug_model.getNameUslug());
 
         }
-
+        // Создания потока сохранения файла
         FileOutputStream outFile = new FileOutputStream(file);
-
+        // Запись файла
         workbook.write(outFile);
+        // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
 
     }
-
+    // Функция для установки стилей Excel
     private static XSSFCellStyle createStyleForTitleNew(XSSFWorkbook workbook) {
         XSSFFont font = workbook.createFont();
         font.setBold(true);
@@ -323,8 +350,11 @@ public class ServiceController {
         return style;
     }
 
+    // Функция сохранения файла в Excel
     public void SaveFileExcel (ArrayList<DataUslug_Model> dataUslug_model_arr, File file) throws IOException {
+        // Создание книги Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
+        // Создание листа
         XSSFSheet sheet = workbook.createSheet("Service sheet");
 
         //List<Employee> list = EmployeeDAO.listEmployees();
@@ -332,44 +362,45 @@ public class ServiceController {
         int rownum = 0;
         Cell cell;
         Row row;
-        //
+        // Установка стилей
         XSSFCellStyle style = createStyleForTitleNew(workbook);
 
         row = sheet.createRow(rownum);
 
-        // EmpNo
+        // Создание столбца EidUslug
         cell = row.createCell(0, CellType.STRING);
         cell.setCellValue("EidUslug");
         cell.setCellStyle(style);
-        // EmpName
+        // Создание столбца названия услуги
         cell = row.createCell(1, CellType.STRING);
         cell.setCellValue("NameUslug");
         cell.setCellStyle(style);
 
 
-        // Data
+        // Перебор по данным
         for (DataUslug_Model uslug_model : dataUslug_model_arr) {
             //System.out.println(mfc_model.getIdMfc() +"\t" +mfc_model.getNameMfc());
             rownum++;
             row = sheet.createRow(rownum);
 
-            // IdMfc (A)
+            // Запись Eid Услуги
             cell = row.createCell(0, CellType.STRING);
             cell.setCellValue(uslug_model.getEidUslug());
-            // NameMFc (B)
+            // Запись Названия Услуги
             cell = row.createCell(1, CellType.STRING);
             cell.setCellValue(uslug_model.getNameUslug());
 
         }
-
+        // Создания потока сохранения файла
         FileOutputStream outFile = new FileOutputStream(file);
-
+        // Запись файла
         workbook.write(outFile);
+        // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
 
     }
-
+    // Класс для возвращения списка услуг, кол-во всех услуг, и кол-во актуальных услуг
     public class result_service {
 
         private ArrayList<DataUslug_Model> data_uslugArr;
@@ -396,7 +427,7 @@ public class ServiceController {
 
 
     }
-
+    // Класс для payload услуг (Чтобы отправить json в post запросе)
     class  Payload_uslug
     {
         public String action;
@@ -405,6 +436,7 @@ public class ServiceController {
         public String type;
         public int tid;
     }
+    // Класс для данных услуг
     class Data_uslug
     {
         public ArrayList<String> serviceType;
@@ -416,7 +448,7 @@ public class ServiceController {
         public int limit;
         public ArrayList<Sort_uslug> sort;
     }
-
+    // Класс для сортировки услуг
     class Sort_uslug
     {
         public String property;

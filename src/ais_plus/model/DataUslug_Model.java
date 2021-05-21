@@ -4,9 +4,9 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class DataUslug_Model {
 
-    private SimpleStringProperty EidUslug;
-    private SimpleStringProperty LidUslug;
-    private SimpleStringProperty NameUslug;
+    private SimpleStringProperty EidUslug; // eid услуги
+    private SimpleStringProperty LidUslug; // lid услуги
+    private SimpleStringProperty NameUslug; // Название услуги
 
 
     public DataUslug_Model(String EidUslug, String LidUslug, String NameUslug) {
@@ -15,7 +15,7 @@ public class DataUslug_Model {
         this.NameUslug = new SimpleStringProperty(NameUslug);
 
     }
-
+    // Геттеры и сеттеры
     public String getEidUslug() {
         return EidUslug.get();
     }

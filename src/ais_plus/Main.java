@@ -11,10 +11,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("view/login.fxml"));
-        primaryStage.setTitle("Ais plus");
-        primaryStage.setScene(new Scene(root, 400, 200));
-        primaryStage.show();
-        primaryStage.setResizable(false);
+        primaryStage.setTitle("Ais plus"); // Название приложения
+        primaryStage.setScene(new Scene(root, 400, 200)); // Изначальный размер окна
+        primaryStage.show(); // Запустить окно приложения
+        primaryStage.setResizable(false); // Сделать размер окна неизменяемым
     }
 
 

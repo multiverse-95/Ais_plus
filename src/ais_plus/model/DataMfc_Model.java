@@ -4,8 +4,8 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class DataMfc_Model {
 
-    private SimpleStringProperty IdMfc;
-    private SimpleStringProperty NameMfc;
+    private SimpleStringProperty IdMfc; // id мфц
+    private SimpleStringProperty NameMfc; // Название мфц
 
 
     public DataMfc_Model(String IdMfc, String NameMfc) {
@@ -13,7 +13,7 @@ public class DataMfc_Model {
         this.NameMfc = new SimpleStringProperty(NameMfc);
 
     }
-
+    // Геттеры и сеттеры
     public String getIdMfc() {
         return IdMfc.get();
     }

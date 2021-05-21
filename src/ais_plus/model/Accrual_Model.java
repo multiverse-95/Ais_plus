@@ -2,30 +2,30 @@ package ais_plus.model;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-
+// Модель для данных по начислениям
 public class Accrual_Model {
-    private SimpleStringProperty IdAccr;
-    private SimpleStringProperty IdPayment;
-    private SimpleStringProperty DisplayName;
-    private SimpleStringProperty Person;
-    private SimpleStringProperty SoloProprietor;
-    private SimpleStringProperty Legal;
-    private SimpleStringProperty Hint;
-    private SimpleStringProperty Name;
-    private SimpleStringProperty BankName;
-    private SimpleStringProperty PersonalAccount;
-    private SimpleStringProperty CorrespAccount;
-    private SimpleStringProperty Bic;
-    private SimpleStringProperty Kpp;
-    private SimpleStringProperty Inn;
-    private SimpleStringProperty RegType;
-    private SimpleStringProperty MfcsOKTMO;
-    private SimpleStringProperty Oktmo;
-    private SimpleStringProperty Cbc;
-    private SimpleStringProperty Urn;
-    private SimpleStringProperty CbcSection;
-    private SimpleStringProperty PreCheckRequired;
-    private SimpleStringProperty Purpose;
+    private SimpleStringProperty IdAccr; // id начисления
+    private SimpleStringProperty IdPayment; // Код платежа
+    private SimpleStringProperty DisplayName; // Имя начисления
+    private SimpleStringProperty Person; // Физическое лицо
+    private SimpleStringProperty SoloProprietor; // Индивидуальный предприниматель
+    private SimpleStringProperty Legal; // Юридическое лицо
+    private SimpleStringProperty Hint; // Подсказка
+    private SimpleStringProperty Name; // Имя платежа
+    private SimpleStringProperty BankName; // Имя банка получателя
+    private SimpleStringProperty PersonalAccount; // Счет получателя
+    private SimpleStringProperty CorrespAccount; // Корресп. счет получателя
+    private SimpleStringProperty Bic; // бик
+    private SimpleStringProperty Kpp; // кпп
+    private SimpleStringProperty Inn; // инн
+    private SimpleStringProperty RegType; // Тип платежа
+    private SimpleStringProperty MfcsOKTMO; // МФЦ соотв. октмо
+    private SimpleStringProperty Oktmo; // ОКТМО
+    private SimpleStringProperty Cbc; // кбк
+    private SimpleStringProperty Urn; // Урн
+    private SimpleStringProperty CbcSection; // Код кбк
+    private SimpleStringProperty PreCheckRequired; // Пречер
+    private SimpleStringProperty Purpose; // Назначение платежа
 
 
     public Accrual_Model(String IdAccr, String IdPayment, String DisplayName, String Person, String SoloProprietor, String Legal, String Hint, String Name, String BankName, String PersonalAccount,
@@ -56,6 +56,7 @@ public class Accrual_Model {
 
 
     }
+    // Сеттеры и геттеры для полей
     public String getIdAccr() {
         return IdAccr.get();
     }

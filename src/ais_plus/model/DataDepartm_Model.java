@@ -3,8 +3,8 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class DataDepartm_Model {
 
-    private SimpleStringProperty IdDepartm;
-    private SimpleStringProperty NameDepartm;
+    private SimpleStringProperty IdDepartm; // id ведомства
+    private SimpleStringProperty NameDepartm; // Название ведомства
 
 
     public DataDepartm_Model(String IdDepartm, String NameDepartm) {
@@ -12,7 +12,7 @@ public class DataDepartm_Model {
         this.NameDepartm = new SimpleStringProperty(NameDepartm);
 
     }
-
+    // Геттеры и сеттеры
     public String getIdDepartm() {
         return IdDepartm.get();
     }

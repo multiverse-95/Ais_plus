@@ -42,22 +42,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+// Контроллер для ведомств
 public class DepartmController {
-
+    // Функция получения данных по ведомствам
     public String Get_data_departm(String cookie) throws IOException {
+        // Хранилище куки
         CookieStore httpCookieStore = new BasicCookieStore();
         Gson gson = new Gson();
-
+        // Создание экземпляра класса для payload ведомств
         Payload_departm payload_departm =new Payload_departm();
+        // Создание экземпляра класса для data ведомств
         Data_departm data_departm = new Data_departm();
+        // Создание экземпляра класс для сортировки ведомств
         Sort_departm sort_departm = new Sort_departm();
 
         ArrayList<String> null_numb = new ArrayList<String>();
-        ArrayList<Data_departm> data_departm_arr = new ArrayList<Data_departm>();
-        ArrayList<Sort_departm> sort_departm_arr = new ArrayList<Sort_departm>();
+        ArrayList<Data_departm> data_departm_arr = new ArrayList<Data_departm>(); // Список для данных ведомств
+        ArrayList<Sort_departm> sort_departm_arr = new ArrayList<Sort_departm>(); // Список для сортировки ведомств
 
-        // Add value for sort_depart
+        // Добавление данных для сортировки ведомств
         sort_departm.property="leaf";
         sort_departm.direction="ASC";
         sort_departm_arr.add(sort_departm);
@@ -67,47 +70,48 @@ public class DepartmController {
         sort_departm_arr.add(sort_departm2);
 
 
-        // Add value for data_depart
+        // Добавление данных для data ведомств
         data_departm.node = "root";
         data_departm.sort = sort_departm_arr;
         data_departm.id = "root";
         data_departm_arr.add(data_departm);
 
-        // Add value for payload_depart
+        // Добавление данных для payload ведомств
         payload_departm.action ="departmentService";
         payload_departm.method ="getDepartments";
         payload_departm.data = data_departm_arr;
         payload_departm.type ="rpc";
         payload_departm.tid =10;
 
-        String postUrl       = "http://192.168.99.91/cpgu/action/router";// put in your url
+        String postUrl       = "http://192.168.99.91/cpgu/action/router"; // Адрес запроса
 
         HttpClient httpClient = null;
         HttpClientBuilder builder = HttpClientBuilder.create().setDefaultCookieStore(httpCookieStore);
         httpClient = builder.build();
         HttpPost post          = new HttpPost(postUrl);
-        StringEntity postingString = new StringEntity(gson.toJson(payload_departm));//gson.tojson() converts your payload to json
+        StringEntity postingString = new StringEntity(gson.toJson(payload_departm)); // Конвертирование данных в json
         post.setEntity(postingString);
         post.setHeader("Content-type", "application/json");
-        post.addHeader("Cookie","JSESSIONID="+cookie);
-        HttpResponse response = httpClient.execute(post);
+        post.addHeader("Cookie","JSESSIONID="+cookie); // Добавление куки в Header
+        HttpResponse response = httpClient.execute(post); // Выполнение post запроса
         HttpEntity entity = response.getEntity();
 
         return EntityUtils.toString(entity);
         //return gson.toJson(payload_departm);
     }
-
+    // Функция для парсинга данных с ведомствами
     public result_departm Parsing_json_depart(String json, String search_text){
-
+        // Создания экземпляра парсинга
         JsonParser parser = new JsonParser();
-        JsonElement element = parser.parse(json);
-        JsonArray jsonArray =element.getAsJsonArray();
-        JsonObject jsonObject = jsonArray.get(0).getAsJsonObject();
-        JsonArray result= jsonObject.get("result").getAsJsonArray();
-        ArrayList<DataDepartm_Model> dataDepartm_modelArr = new ArrayList<DataDepartm_Model>();
+        JsonElement element = parser.parse(json); // Получение главного элемента
+        JsonArray jsonArray =element.getAsJsonArray(); // Получение массива элеменнтов
+        JsonObject jsonObject = jsonArray.get(0).getAsJsonObject(); // Получение первого элемента из массива
+        JsonArray result= jsonObject.get("result").getAsJsonArray(); // Получение элемента result
+        ArrayList<DataDepartm_Model> dataDepartm_modelArr = new ArrayList<DataDepartm_Model>(); // Список в который будут записываться все ведомства
         String departm_info="";
         //count_DepartmAll_t.setText(String.valueOf(result.size()));
         int count_DepartmAll=result.size();
+        // Идем по циклу, парсим данные и записываем данные по ведомствам в список
         for (int i=0; i<result.size(); i++){
             dataDepartm_modelArr.add(new DataDepartm_Model(result.get(i).getAsJsonObject().get("departmentId").getAsString(),
                     result.get(i).getAsJsonObject().get("title").getAsString()));
@@ -116,16 +120,18 @@ public class DepartmController {
         //ArrayList<DataDepartm_Model> dataDepartm_modelArr_find= Search_departm(dataDepartm_modelArr, search_text);
         //ArrayList<DataDepartm_Model> dataDepartm_modelArr_find= null;
         //return dataDepartm_modelArr;
+        // Возвращаем список ведомств и количество ведомств
         return new result_departm(dataDepartm_modelArr,count_DepartmAll);
 
     }
-
+    // Функция для поски по ведомствам
     public ArrayList<DataDepartm_Model> Search_departm(ArrayList<DataDepartm_Model> dataDepartm_modelArr, String search_text){
 
-
+            // Регулярные выражения для поиска в строке
             Pattern pattern = Pattern.compile(".*" + search_text.toLowerCase() + ".*");
-
+            // Список найденных ведомств
             ArrayList<DataDepartm_Model> dataDepartmFind_modelArr = new ArrayList<DataDepartm_Model>();
+            // Идем по циклу ведомства и если есть совпадение с регулярными выражениями, то записываем в список найденных ведомств
             for (int i = 0; i < dataDepartm_modelArr.size(); i++) {
                 Matcher matcher = pattern.matcher(dataDepartm_modelArr.get(i).getNameDepartm().toLowerCase());
                 if (matcher.find()) {
@@ -136,24 +142,30 @@ public class DepartmController {
                     //System.out.println("Search Failed!");
                 }
             }
+            // Возвращаем список найденных ведомств
             return dataDepartmFind_modelArr;
     }
-
+    // Функция для загрузки отчета по ведомствам
     public void Download_departm(ArrayList<DataDepartm_Model> dataDepartm_models_arr) {
 
-            String text_test="";
-
+            String text_test=""; // Переменная в которой будет храниться текст отчета
+            // Идем по циклу и добавляем в переменную данные о ведомствах
             for (int i=0; i<dataDepartm_models_arr.size(); i++){
                 text_test+=dataDepartm_models_arr.get(i).getIdDepartm() +"\t"+ dataDepartm_models_arr.get(i).getNameDepartm()+"\n";
             }
             //System.out.println(text_test);
+            // Создаем экземпляр класса FileChooser
             FileChooser fileChooser = new FileChooser();
 
-            //Set extension filter
-            fileChooser.setInitialFileName("departm_report");
+            // Устанавливаем список расширений для файла
+            fileChooser.setInitialFileName("departm_report");// Устанавливаем название для файла
+            // Список расширений для Excel
             FileChooser.ExtensionFilter extFilterExcel = new FileChooser.ExtensionFilter("Excel file (*.xlsx)", "*.xlsx");
+            // Список расширений для Excel (старый формат)
             FileChooser.ExtensionFilter extFilterExcelOld = new FileChooser.ExtensionFilter("Excel file (old format) (*.xls)", "*.xls");
+            // Список расширений для txt
             FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT file (*.txt)", "*.txt");
+            // Добавляем список расширений
             fileChooser.getExtensionFilters().add(extFilterExcel);
             fileChooser.getExtensionFilters().add(extFilterExcelOld);
             fileChooser.getExtensionFilters().add(extFilter);
@@ -168,41 +180,51 @@ public class DepartmController {
             Parent root = loader.getRoot();
             appController AppController = loader.getController();
             Stage stage = new Stage();
-            //Show save file dialog
+            // Показываем диалоговое окно для сохранения файла
             File file = fileChooser.showSaveDialog(stage);
-        if (fileChooser.getSelectedExtensionFilter()!=null){
-            if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xlsx]")){
-                System.out.println("SELECTED XLSX");
-                if(file != null){
-                    try {
-                        SaveFileExcel(dataDepartm_models_arr, file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            // Если не нажать кнопка "Отмена"
+            if (fileChooser.getSelectedExtensionFilter()!=null){
+                // Если выбрано расширение для Excel
+                if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xlsx]")){
+                    System.out.println("SELECTED XLSX");
+                    // Если файл не пустой
+                    if(file != null){
+                        try {
+                            // Сохраняем файл
+                            SaveFileExcel(dataDepartm_models_arr, file);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                } // Иначе если выбрано расширение для старого формата Excel
+                else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xls]")){
+                    System.out.println("SELECTED XLS");
+                    // Если файл не пустой
+                    if(file != null){
+                        try {
+                            // Сохраняем файл
+                            SaveFileExcelOldFormat(dataDepartm_models_arr, file);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                } // Иначе если выбрано расширение для txt
+                else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.txt]")){
+                    System.out.println("SELECTED TXT");
+                    // Если файл не пустой
+                    if(file != null){
+                        // Сохраняем файл
+                        SaveFileTxt(text_test, file);
                     }
 
                 }
-            } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.xls]")){
-                System.out.println("SELECTED XLS");
-                if(file != null){
-                    try {
-                        SaveFileExcelOldFormat(dataDepartm_models_arr, file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            } else if (fileChooser.getSelectedExtensionFilter().getExtensions().toString().equals("[*.txt]")){
-                System.out.println("SELECTED TXT");
-                if(file != null){
-                    SaveFileTxt(text_test, file);
-                }
-
             }
-        }
 
 
     }
-
+    // Функция сохранения файла в txt
     private void SaveFileTxt(String content, File file){
         try {
             FileWriter fileWriter = null;
@@ -216,7 +238,7 @@ public class DepartmController {
 
     }
 
-    // Excel Save
+    // Функция для установки стилей Excel старый формат
     private static HSSFCellStyle createStyleForTitleOld(HSSFWorkbook workbook) {
         HSSFFont font = workbook.createFont();
         font.setBold(true);
@@ -224,9 +246,11 @@ public class DepartmController {
         style.setFont(font);
         return style;
     }
-
+    // Функция сохранения файла в Excel старый формат
     public void SaveFileExcelOldFormat (ArrayList<DataDepartm_Model> dataDepartm_model_arr, File file) throws IOException {
+        // Создание книги Excel
         HSSFWorkbook workbook = new HSSFWorkbook();
+        // Создание листа
         HSSFSheet sheet = workbook.createSheet("Departm sheet");
 
         //List<Employee> list = EmployeeDAO.listEmployees();
@@ -234,44 +258,45 @@ public class DepartmController {
         int rownum = 0;
         Cell cell;
         Row row;
-        //
+        // Установка стилей для книги
         HSSFCellStyle style = createStyleForTitleOld(workbook);
 
         row = sheet.createRow(rownum);
 
-        // EmpNo
+        // Создание столбца IdDepartm
         cell = row.createCell(0, CellType.STRING);
         cell.setCellValue("IdDepartm");
         cell.setCellStyle(style);
-        // EmpName
+        // Создание столбца названия ведомства
         cell = row.createCell(1, CellType.STRING);
         cell.setCellValue("NameDepartm");
         cell.setCellStyle(style);
 
 
-        // Data
+        // Перебор по данным
         for (DataDepartm_Model departm_model : dataDepartm_model_arr) {
             //System.out.println(mfc_model.getIdMfc() +"\t" +mfc_model.getNameMfc());
             rownum++;
             row = sheet.createRow(rownum);
 
-            // IdMfc (A)
+            // Запись id ведомства
             cell = row.createCell(0, CellType.STRING);
             cell.setCellValue(departm_model.getIdDepartm());
-            // NameMFc (B)
+            // Запись Названия ведомства
             cell = row.createCell(1, CellType.STRING);
             cell.setCellValue(departm_model.getNameDepartm());
 
         }
-
+        // Создания потока сохранения файла
         FileOutputStream outFile = new FileOutputStream(file);
-
+        // Запись файла
         workbook.write(outFile);
+        // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
 
     }
-
+    // Функция для установки стилей Excel
     private static XSSFCellStyle createStyleForTitleNew(XSSFWorkbook workbook) {
         XSSFFont font = workbook.createFont();
         font.setBold(true);
@@ -279,9 +304,11 @@ public class DepartmController {
         style.setFont(font);
         return style;
     }
-
+    // Функция сохранения файла в Excel
     public void SaveFileExcel (ArrayList<DataDepartm_Model> dataDepartm_model_arr, File file) throws IOException {
+        // Создание книги Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
+        // Создание листа
         XSSFSheet sheet = workbook.createSheet("Departm sheet");
 
         //List<Employee> list = EmployeeDAO.listEmployees();
@@ -289,39 +316,40 @@ public class DepartmController {
         int rownum = 0;
         Cell cell;
         Row row;
-        //
+        // Установка стилей
         XSSFCellStyle style = createStyleForTitleNew(workbook);
 
         row = sheet.createRow(rownum);
 
-        // EmpNo
+        // Создание столбца IdDepartm
         cell = row.createCell(0, CellType.STRING);
         cell.setCellValue("IdDepartm");
         cell.setCellStyle(style);
-        // EmpName
+        // Создание столбца названия ведомства
         cell = row.createCell(1, CellType.STRING);
         cell.setCellValue("NameDepartm");
         cell.setCellStyle(style);
 
 
-        // Data
+        // Перебор по данным
         for (DataDepartm_Model departm_model : dataDepartm_model_arr) {
             //System.out.println(mfc_model.getIdMfc() +"\t" +mfc_model.getNameMfc());
             rownum++;
             row = sheet.createRow(rownum);
 
-            // IdMfc (A)
+            // Запись id Ведомства
             cell = row.createCell(0, CellType.STRING);
             cell.setCellValue(departm_model.getIdDepartm());
-            // NameMFc (B)
+            // Запись Названия Ведомства
             cell = row.createCell(1, CellType.STRING);
             cell.setCellValue(departm_model.getNameDepartm());
 
         }
-
+        // Создания потока сохранения файла
         FileOutputStream outFile = new FileOutputStream(file);
-
+        // Запись файла
         workbook.write(outFile);
+        // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
 
@@ -329,7 +357,7 @@ public class DepartmController {
 
 
 
-
+    // Класс для возвращения списка ведомств, кол-во всех ведомств
     public class result_departm {
 
         private ArrayList<DataDepartm_Model> data_departmArr;
@@ -350,7 +378,7 @@ public class DepartmController {
             return count_DepartmAll;
         }
     }
-
+    // Класс для payload ведомств (Чтобы отправить json в post запросе)
     class  Payload_departm
     {
         public String action;
@@ -359,12 +387,14 @@ public class DepartmController {
         public String type;
         public int tid;
     }
+    // Класс для данных ведомств
     class Data_departm
     {
         public String node;
         public ArrayList<Sort_departm> sort;
         public String id;
     }
+    // Класс для сортировки ведомств
     class Sort_departm
     {
         public String property;

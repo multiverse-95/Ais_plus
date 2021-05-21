@@ -1,5 +1,5 @@
 package ais_plus;
-
+// Модель получения куки (не используется)
 public class Get_Cookie {
     private String cookie;
 
