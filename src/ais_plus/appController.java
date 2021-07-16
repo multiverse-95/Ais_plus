@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import ais_plus.controller.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -140,6 +141,8 @@ public class appController {
     void initialize() throws IOException {
 
     }
+
+
     // Функция для получения начислений по услуге
     public void Show_accruals(String cookie_value){
         // Устанавлием событие на кнопку "Начисления"

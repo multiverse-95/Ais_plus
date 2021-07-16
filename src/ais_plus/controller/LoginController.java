@@ -1,6 +1,12 @@
 package ais_plus.controller;
 
+import ais_plus.appController;
 import com.google.gson.Gson;
+import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
@@ -20,8 +26,31 @@ import java.util.List;
 // Контроллер для авторизации в АИС
 public class LoginController {
 
+     public static class Task1 extends Task<String> {
+        private final String username;
+        private final String password;
+
+        public Task1(String username, String password) {
+            this.username = username;
+            this.password =password;
+        }
+        @Override
+        protected String call() throws Exception {
+            String cookie=Autoriz1(username,password);
+            if (!cookie.equals("Login or password is incorrect!")){
+                System.out.println("YES!");
+                Autoriz2(username,password, cookie);
+                Get_admin_role(cookie);
+
+            } else {
+                System.out.println("NO!");
+            }
+            return cookie;
+        }
+    }
+
     // Функция для начальной авторизации
-    public String Autoriz1(String username, String password) throws IOException {
+    public static String Autoriz1(String username, String password) throws IOException {
         Login_Model login_model =new Login_Model(); // Получаем модель авторизации
         CookieStore httpCookieStore = new BasicCookieStore(); // Для куки
         login_model.username =username; // Логин
@@ -52,7 +81,7 @@ public class LoginController {
 
     }
     // Вторая авторизация с указанием cookie в header
-    public String Autoriz2 (String username, String password,String cookie) throws IOException {
+    public static String Autoriz2(String username, String password, String cookie) throws IOException {
 
         Login_Model login_model =new Login_Model(); // Получаем модель авторизации
         CookieStore httpCookieStore = new BasicCookieStore(); // Для куки
@@ -76,7 +105,7 @@ public class LoginController {
 
     }
     // Функция для получение прав администратора
-    public String Get_admin_role(String cookie) throws IOException {
+    public static String Get_admin_role(String cookie) throws IOException {
         // Установка cookie по-умолчанию
         CookieStore httpCookieStore = new BasicCookieStore();
         Gson gson = new Gson(); // Вызов экземпляра gson
