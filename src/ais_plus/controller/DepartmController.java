@@ -4,6 +4,7 @@ import ais_plus.appController;
 import ais_plus.model.DataMfc_Model;
 import ais_plus.model.DataUslug_Model;
 import com.google.gson.*;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.FileChooser;
@@ -44,8 +45,28 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 // Контроллер для ведомств
 public class DepartmController {
+    public static class DepartmTask extends Task<result_departm> {
+        private final String cookies;
+        private final String search_text;
+
+
+        public DepartmTask(String cookies, String search_text) {
+            this.cookies = cookies;
+            this.search_text=search_text;
+
+        }
+        @Override
+        protected result_departm call() throws Exception {
+            String result_json= Get_data_departm(cookies);
+
+            result_departm parsed_result= Parsing_json_depart(result_json, search_text);
+
+            return parsed_result;
+        }
+    }
+
     // Функция получения данных по ведомствам
-    public String Get_data_departm(String cookie) throws IOException {
+    public static String Get_data_departm(String cookie) throws IOException {
         // Хранилище куки
         CookieStore httpCookieStore = new BasicCookieStore();
         Gson gson = new Gson();
@@ -100,7 +121,7 @@ public class DepartmController {
         //return gson.toJson(payload_departm);
     }
     // Функция для парсинга данных с ведомствами
-    public result_departm Parsing_json_depart(String json, String search_text){
+    public static result_departm Parsing_json_depart(String json, String search_text){
         // Создания экземпляра парсинга
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(json); // Получение главного элемента
@@ -358,7 +379,7 @@ public class DepartmController {
 
 
     // Класс для возвращения списка ведомств, кол-во всех ведомств
-    public class result_departm {
+    public static class result_departm {
 
         private ArrayList<DataDepartm_Model> data_departmArr;
         private int count_DepartmAll;
@@ -379,7 +400,7 @@ public class DepartmController {
         }
     }
     // Класс для payload ведомств (Чтобы отправить json в post запросе)
-    class  Payload_departm
+    static class  Payload_departm
     {
         public String action;
         public String method;
@@ -388,14 +409,14 @@ public class DepartmController {
         public int tid;
     }
     // Класс для данных ведомств
-    class Data_departm
+    static class Data_departm
     {
         public String node;
         public ArrayList<Sort_departm> sort;
         public String id;
     }
     // Класс для сортировки ведомств
-    class Sort_departm
+    static class Sort_departm
     {
         public String property;
         public String direction;

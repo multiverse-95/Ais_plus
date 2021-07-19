@@ -14,9 +14,11 @@ import ais_plus.controller.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -24,6 +26,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ais_plus.model.DataDepartm_Model;
@@ -52,6 +57,23 @@ public class appController {
 
     @FXML
     private URL location;
+    @FXML
+    private StackPane root_usl;
+
+    @FXML
+    private VBox vbox_usl_main;
+
+    @FXML
+    private StackPane root_depart;
+
+    @FXML
+    private VBox vbox_departm_main;
+
+    @FXML
+    private StackPane root_mfc;
+
+    @FXML
+    private VBox vbox_mfc_main;
 
     @FXML
     private TableView<DataUslug_Model> data_table;
@@ -318,6 +340,18 @@ public class appController {
         System.out.println(search_text);
         int limit_usl=0; // Лимит услуг
         // Получение количество всех услуг на сервере
+
+
+        ProgressIndicator pi = new ProgressIndicator();
+        VBox box = new VBox(pi);
+        box.setAlignment(Pos.CENTER);
+        // Grey Background
+        vbox_usl_main.setDisable(true);
+        root_usl.getChildren().add(box);
+
+        Task ServiceTask = new ServiceController.ServiceTask(cookie_value,search_text , 25, isCheckBox_check);
+
+/*
         limit_usl=  serviceController.Total_usl_from_serv(serviceController.Get_data_uslug(cookie_value, search_text, 25));
         System.out.println("LIMIT_uslug " +limit_usl);
         // Получение json услуг
@@ -326,29 +360,44 @@ public class appController {
         //System.out.println(result_json);
         // Получение распарсенных данных по услугам
         ServiceController.result_service parsed_result= serviceController.Parsing_json_uslug(result_json, limit_usl, isCheckBox_check);
+*/
 
-        count_uslAll_t.setText(String.valueOf(parsed_result.getAllUslug())); // Установка количества всех услуг для поля Все услуги
-        count_uslAct_t.setText(String.valueOf(parsed_result.getActualUslug())); // Установка количества актуальных услуг для поля Актуальные услуги
+        //SetOnSucceeded methode
+        ServiceTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                ServiceController.result_service parsed_result= (ServiceController.result_service) ServiceTask.getValue();
+                box.setDisable(true);
+                pi.setVisible(false);
+                vbox_usl_main.setDisable(false);
+                count_uslAll_t.setText(String.valueOf(parsed_result.getAllUslug())); // Установка количества всех услуг для поля Все услуги
+                count_uslAct_t.setText(String.valueOf(parsed_result.getActualUslug())); // Установка количества актуальных услуг для поля Актуальные услуги
 
-        // Создание списка с данными по услугам
-        ArrayList<DataUslug_Model> parsed_result_arr= parsed_result.getData_uslugArr();
-        ObservableList<DataUslug_Model> dataUslug_models = FXCollections.observableArrayList(parsed_result_arr);
+                // Создание списка с данными по услугам
+                ArrayList<DataUslug_Model> parsed_result_arr= parsed_result.getData_uslugArr();
+                ObservableList<DataUslug_Model> dataUslug_models = FXCollections.observableArrayList(parsed_result_arr);
 
-        // Заполнение таблицы данными по услугам
-        id_usl.setCellValueFactory(new PropertyValueFactory<>("EidUslug"));
-        id_usl.setCellFactory(TextFieldTableCell.<DataUslug_Model>forTableColumn());
-        name_usl.setCellValueFactory(new PropertyValueFactory<>("NameUslug"));
-        name_usl.setCellFactory(TextFieldTableCell.<DataUslug_Model>forTableColumn());
+                // Заполнение таблицы данными по услугам
+                id_usl.setCellValueFactory(new PropertyValueFactory<>("EidUslug"));
+                id_usl.setCellFactory(TextFieldTableCell.<DataUslug_Model>forTableColumn());
+                name_usl.setCellValueFactory(new PropertyValueFactory<>("NameUslug"));
+                name_usl.setCellFactory(TextFieldTableCell.<DataUslug_Model>forTableColumn());
 
+                data_table.setItems(dataUslug_models);
 
-        data_table.setItems(dataUslug_models);
-        // Вызов функции показать услуги
-        Show_uslugs(cookie_value);
-        // Создание события для кнопки скачать отчет по услугам в АИС
-        download_usl_b.setOnAction(event -> {
-            serviceController.Download_uslugs(parsed_result_arr);
+                // Вызов функции показать услуги
+                Show_uslugs(cookie_value);
+                // Создание события для кнопки скачать отчет по услугам в АИС
+                download_usl_b.setOnAction(event2 -> {
+                    serviceController.Download_uslugs(parsed_result_arr);
+                });
+            }
         });
 
+        //bind progress bar to both task progress property
+
+        Thread serviceThread = new Thread(ServiceTask);
+        serviceThread.start();
 
         //return parsed_result;
         return null;
@@ -368,80 +417,67 @@ public class appController {
                         String search_text =search_t.getText(); // Получить значение с текстового поля
                         //System.out.println(search_text);
                         String count_uslugs= count_usl_t.getText(); // Установка количества услуг для текстового поля
+                        String search_text_depart=search_departm_t.getText();
+
                         int limit_usl=Integer.parseInt(count_uslugs);
+
+
                         String result_json= null;
-                        try {
-                            // Получение Json для ведомств МфЦ
-                            result_json =  departmController.Get_data_departm(cookie_value);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
 
-                        // Получение распарсенных данных по ведомствам МфЦ
-                        DepartmController.result_departm parsed_result= departmController.Parsing_json_depart(result_json, search_departm_t.getText());
-                        ArrayList<DataDepartm_Model> parsed_result_arr=  parsed_result.getData_departmArr();
-                        //ArrayList<DataDepartm_Model> parsed_result_arr=  Parsing_json_depart(result_json);
-                        //System.out.println("Parsed data:\n"+ parsed_result.get(0).getNameUslug());
-                        ObservableList<DataDepartm_Model> dataDepartm_models = FXCollections.observableArrayList(parsed_result_arr);
-                        // Получение списка всех ведомств и заполнение в текстовое поле
-                        count_DepartmAll_t.setText(String.valueOf(parsed_result.getAllDepartm()));
-                        // Заполение данными таблицы
-                        id_departm.setCellValueFactory(new PropertyValueFactory<>("IdDepartm"));
-                        id_departm.setCellFactory(TextFieldTableCell.<DataDepartm_Model>forTableColumn());
-                        name_departm.setCellValueFactory(new PropertyValueFactory<>("NameDepartm"));
-                        name_departm.setCellFactory(TextFieldTableCell.<DataDepartm_Model>forTableColumn());
+                        ProgressIndicator pi = new ProgressIndicator();
+                        VBox box = new VBox(pi);
+                        box.setAlignment(Pos.CENTER);
+                        // Grey Background
+                        vbox_departm_main.setDisable(true);
+                        root_depart.getChildren().add(box);
+                        Task DepartmTask = new DepartmController.DepartmTask(cookie_value,search_text_depart);
 
-                        data_table_departm.setItems(dataDepartm_models);
-                        // Вызов события для кнопки скачивания отчета по ведомствам
-                        download_departm_b.setOnAction(event2 -> {
-                            departmController.Download_departm(parsed_result_arr);
-                        });
-
-
-                        // Поиск по ведомствам
-                        show_departm.setOnAction(event3 -> {
-                            // Получение списка найденных ведомств
-                            ArrayList<DataDepartm_Model> parsed_result_arr_find= departmController.Search_departm(parsed_result_arr,search_departm_t.getText());
-                            System.out.println("TEST SEARCH 111 "+ search_departm_t.getText());
-                            // Событие на кнопку скачивания ведомств
-                            download_departm_b.setOnAction(event4 -> {
-                                departmController.Download_departm(parsed_result_arr_find);
-                            });
-                            // Получение количества ведомств
-                            count_DepartmAll_t.setText(String.valueOf(parsed_result_arr_find.size()));
-
-                            data_table_departm.setPlaceholder(new Label("Ничего не найдено!"));
-
-                            ObservableList<DataDepartm_Model> dataDepartm_models_find = FXCollections.observableArrayList(parsed_result_arr_find);
-
-                            // Заполнение данными по таблице ведомств
-                            id_departm.setCellValueFactory(new PropertyValueFactory<>("IdDepartm"));
-                            id_departm.setCellFactory(TextFieldTableCell.<DataDepartm_Model>forTableColumn());
-                            name_departm.setCellValueFactory(new PropertyValueFactory<>("NameDepartm"));
-                            name_departm.setCellFactory(TextFieldTableCell.<DataDepartm_Model>forTableColumn());
-
-
-                            data_table_departm.setItems(dataDepartm_models_find);
-
-
-                        });
-                        // Событие на кнопку Enter
-                        search_departm_t.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                        //SetOnSucceeded methode
+                        DepartmTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                             @Override
-                            public void handle(KeyEvent keyEvent) {
-                                if (keyEvent.getCode() == KeyCode.ENTER)  {
+                            public void handle(WorkerStateEvent event) {
+                                // Получение распарсенных данных по ведомствам МфЦ
+                                DepartmController.result_departm parsed_result= (DepartmController.result_departm) DepartmTask.getValue();
+
+                                box.setDisable(true);
+                                pi.setVisible(false);
+                                vbox_departm_main.setDisable(false);
+                                ArrayList<DataDepartm_Model> parsed_result_arr=  parsed_result.getData_departmArr();
+                                //ArrayList<DataDepartm_Model> parsed_result_arr=  Parsing_json_depart(result_json);
+                                //System.out.println("Parsed data:\n"+ parsed_result.get(0).getNameUslug());
+                                ObservableList<DataDepartm_Model> dataDepartm_models = FXCollections.observableArrayList(parsed_result_arr);
+                                // Получение списка всех ведомств и заполнение в текстовое поле
+                                count_DepartmAll_t.setText(String.valueOf(parsed_result.getAllDepartm()));
+                                // Заполение данными таблицы
+                                id_departm.setCellValueFactory(new PropertyValueFactory<>("IdDepartm"));
+                                id_departm.setCellFactory(TextFieldTableCell.<DataDepartm_Model>forTableColumn());
+                                name_departm.setCellValueFactory(new PropertyValueFactory<>("NameDepartm"));
+                                name_departm.setCellFactory(TextFieldTableCell.<DataDepartm_Model>forTableColumn());
+
+                                data_table_departm.setItems(dataDepartm_models);
+                                // Вызов события для кнопки скачивания отчета по ведомствам
+                                download_departm_b.setOnAction(event2 -> {
+                                    departmController.Download_departm(parsed_result_arr);
+                                });
+
+
+                                // Поиск по ведомствам
+                                show_departm.setOnAction(event3 -> {
+                                    // Получение списка найденных ведомств
                                     ArrayList<DataDepartm_Model> parsed_result_arr_find= departmController.Search_departm(parsed_result_arr,search_departm_t.getText());
                                     System.out.println("TEST SEARCH 111 "+ search_departm_t.getText());
-                                    download_departm_b.setOnAction(event5 -> {
+                                    // Событие на кнопку скачивания ведомств
+                                    download_departm_b.setOnAction(event4 -> {
                                         departmController.Download_departm(parsed_result_arr_find);
                                     });
+                                    // Получение количества ведомств
                                     count_DepartmAll_t.setText(String.valueOf(parsed_result_arr_find.size()));
 
                                     data_table_departm.setPlaceholder(new Label("Ничего не найдено!"));
 
                                     ObservableList<DataDepartm_Model> dataDepartm_models_find = FXCollections.observableArrayList(parsed_result_arr_find);
 
-                                    // Заполнение данными таблицы по ведомствам
+                                    // Заполнение данными по таблице ведомств
                                     id_departm.setCellValueFactory(new PropertyValueFactory<>("IdDepartm"));
                                     id_departm.setCellFactory(TextFieldTableCell.<DataDepartm_Model>forTableColumn());
                                     name_departm.setCellValueFactory(new PropertyValueFactory<>("NameDepartm"));
@@ -449,9 +485,46 @@ public class appController {
 
 
                                     data_table_departm.setItems(dataDepartm_models_find);
-                                }
+
+
+                                });
+                                // Событие на кнопку Enter
+                                search_departm_t.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                                    @Override
+                                    public void handle(KeyEvent keyEvent) {
+                                        if (keyEvent.getCode() == KeyCode.ENTER)  {
+                                            ArrayList<DataDepartm_Model> parsed_result_arr_find= departmController.Search_departm(parsed_result_arr,search_departm_t.getText());
+                                            System.out.println("TEST SEARCH 111 "+ search_departm_t.getText());
+                                            download_departm_b.setOnAction(event5 -> {
+                                                departmController.Download_departm(parsed_result_arr_find);
+                                            });
+                                            count_DepartmAll_t.setText(String.valueOf(parsed_result_arr_find.size()));
+
+                                            data_table_departm.setPlaceholder(new Label("Ничего не найдено!"));
+
+                                            ObservableList<DataDepartm_Model> dataDepartm_models_find = FXCollections.observableArrayList(parsed_result_arr_find);
+
+                                            // Заполнение данными таблицы по ведомствам
+                                            id_departm.setCellValueFactory(new PropertyValueFactory<>("IdDepartm"));
+                                            id_departm.setCellFactory(TextFieldTableCell.<DataDepartm_Model>forTableColumn());
+                                            name_departm.setCellValueFactory(new PropertyValueFactory<>("NameDepartm"));
+                                            name_departm.setCellFactory(TextFieldTableCell.<DataDepartm_Model>forTableColumn());
+
+
+                                            data_table_departm.setItems(dataDepartm_models_find);
+                                        }
+                                    }
+                                });
+
                             }
                         });
+
+                        //bind progress bar to both task progress property
+
+                        Thread serviceThread = new Thread(DepartmTask);
+                        serviceThread.start();
+
+
                     }
                 }
             });
@@ -478,32 +551,54 @@ public class appController {
                     } else {
                         isCheckbox = false;
                     }
-                    try {
-                        // Получение Json по мфц
-                        result_json = mfcController.Get_data_mfc(cookie_value, search, isCheckbox);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    // Получение распарсенных данных по мфц
-                    MfcController.result_mfc parsed_result = mfcController.Parsing_json_mfc(result_json);
-                    count_mfcAll_t.setText(String.valueOf(parsed_result.getAllMfc())); // Установка количества
-                    ArrayList<DataMfc_Model> parsed_result_arr = parsed_result.getData_mfcArr();
-                    ObservableList<DataMfc_Model> dataMfc_models = FXCollections.observableArrayList(parsed_result_arr);
 
-                    // Заполнение данными таблицы
-                    id_mfc.setCellValueFactory(new PropertyValueFactory<>("IdMfc"));
-                    id_mfc.setCellFactory(TextFieldTableCell.<DataMfc_Model>forTableColumn());
-                    name_mfc.setCellValueFactory(new PropertyValueFactory<>("NameMfc"));
-                    name_mfc.setCellFactory(TextFieldTableCell.<DataMfc_Model>forTableColumn());
+                    ProgressIndicator pi = new ProgressIndicator();
+                    VBox box = new VBox(pi);
+                    box.setAlignment(Pos.CENTER);
+                    // Grey Background
+                    vbox_mfc_main.setDisable(true);
+                    root_mfc.getChildren().add(box);
+
+                    Task MfcTask = new MfcController.MfcTask(cookie_value, search, isCheckbox);
+
+                    //SetOnSucceeded methode
+                    MfcTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                        @Override
+                        public void handle(WorkerStateEvent event) {
+                            // Получение распарсенных данных по мфц
+                            MfcController.result_mfc parsed_result= (MfcController.result_mfc) MfcTask.getValue();
+
+                            box.setDisable(true);
+                            pi.setVisible(false);
+                            vbox_mfc_main.setDisable(false);
+                            count_mfcAll_t.setText(String.valueOf(parsed_result.getAllMfc())); // Установка количества
+                            ArrayList<DataMfc_Model> parsed_result_arr = parsed_result.getData_mfcArr();
+                            ObservableList<DataMfc_Model> dataMfc_models = FXCollections.observableArrayList(parsed_result_arr);
+
+                            // Заполнение данными таблицы
+                            id_mfc.setCellValueFactory(new PropertyValueFactory<>("IdMfc"));
+                            id_mfc.setCellFactory(TextFieldTableCell.<DataMfc_Model>forTableColumn());
+                            name_mfc.setCellValueFactory(new PropertyValueFactory<>("NameMfc"));
+                            name_mfc.setCellFactory(TextFieldTableCell.<DataMfc_Model>forTableColumn());
 
 
-                    data_table_mfc.setItems(dataMfc_models);
+                            data_table_mfc.setItems(dataMfc_models);
 
-                    // Установка ивента на кнпопку поиска по МФЦ
-                    download_mfc_b.setOnAction(event2 -> {
-                        mfcController.Download_mfc(parsed_result_arr);
+                            // Установка ивента на кнпопку поиска по МФЦ
+                            download_mfc_b.setOnAction(event2 -> {
+                                mfcController.Download_mfc(parsed_result_arr);
+                            });
+                            Show_mfc(cookie_value);
+
+                        }
                     });
-                    Show_mfc(cookie_value);
+
+                    //bind progress bar to both task progress property
+
+                    Thread serviceThread = new Thread(MfcTask);
+                    serviceThread.start();
+
+
 
                 }
             }

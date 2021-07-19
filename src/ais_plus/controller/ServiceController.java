@@ -1,8 +1,8 @@
 package ais_plus.controller;
 
 import ais_plus.appController;
-import ais_plus.model.DataMfc_Model;
 import com.google.gson.*;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.FileChooser;
@@ -39,8 +39,31 @@ import java.util.logging.Logger;
 
 // Контроллер для услуг
 public class ServiceController {
+
+    public static class ServiceTask extends Task<result_service> {
+        private final String cookies;
+        private final String search_text;
+        private final int limit_usl;
+        private boolean isCheckBox_check;
+
+        public ServiceTask(String cookies, String search_text, int limit_usl, boolean isCheckBox_check) {
+            this.cookies = cookies;
+            this.search_text = search_text;
+            this.limit_usl=limit_usl;
+            this.isCheckBox_check= isCheckBox_check;
+        }
+        @Override
+        protected result_service call() throws Exception {
+            int limit_uslug =Total_usl_from_serv(Get_data_uslug(cookies, search_text, limit_usl));
+            String result_json= Get_data_uslug(cookies, search_text, limit_uslug);
+
+            result_service parsed_result= Parsing_json_uslug(result_json, limit_uslug, isCheckBox_check);
+
+            return parsed_result;
+        }
+    }
     // Функция получения данных по услугам
-    public String Get_data_uslug(String cookie, String search_text, int limit_usl) throws IOException {
+    public static String Get_data_uslug(String cookie, String search_text, int limit_usl) throws IOException {
 
         // Хранилище куки
         CookieStore httpCookieStore = new BasicCookieStore();
@@ -98,7 +121,7 @@ public class ServiceController {
         //return gson.toJson(payload_uslug);
     }
     // Функция для получения количества всех услуг на сервере
-    public int Total_usl_from_serv(String json){
+    public static int Total_usl_from_serv(String json){
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(json);
         JsonArray jsonArray =element.getAsJsonArray();
@@ -111,7 +134,7 @@ public class ServiceController {
         return limit_usl_fromServer;
     }
     // Функция для парсинга данных с услуг
-    public result_service Parsing_json_uslug(String json, int limit_usl, boolean isCheckBox_check) throws IOException {
+    public static result_service Parsing_json_uslug(String json, int limit_usl, boolean isCheckBox_check) throws IOException {
 
         // Создания экземпляра парсинга
         JsonParser parser = new JsonParser();
@@ -401,7 +424,7 @@ public class ServiceController {
 
     }
     // Класс для возвращения списка услуг, кол-во всех услуг, и кол-во актуальных услуг
-    public class result_service {
+    public static class result_service {
 
         private ArrayList<DataUslug_Model> data_uslugArr;
         private int SumAllUslug;
@@ -428,7 +451,7 @@ public class ServiceController {
 
     }
     // Класс для payload услуг (Чтобы отправить json в post запросе)
-    class  Payload_uslug
+    static class  Payload_uslug
     {
         public String action;
         public String method;
@@ -437,7 +460,7 @@ public class ServiceController {
         public int tid;
     }
     // Класс для данных услуг
-    class Data_uslug
+    static class Data_uslug
     {
         public ArrayList<String> serviceType;
         public ArrayList<String> requesterType;
@@ -449,7 +472,7 @@ public class ServiceController {
         public ArrayList<Sort_uslug> sort;
     }
     // Класс для сортировки услуг
-    class Sort_uslug
+    static class Sort_uslug
     {
         public String property;
         public String direction;

@@ -26,11 +26,11 @@ import java.util.List;
 // Контроллер для авторизации в АИС
 public class LoginController {
 
-     public static class Task1 extends Task<String> {
+     public static class LoginTask extends Task<String> {
         private final String username;
         private final String password;
 
-        public Task1(String username, String password) {
+        public LoginTask(String username, String password) {
             this.username = username;
             this.password =password;
         }

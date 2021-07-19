@@ -5,6 +5,7 @@ import ais_plus.model.DataUslug_Model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.FileChooser;
@@ -41,8 +42,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 // Контроллер для списка мфц
 public class MfcController {
+    public static class MfcTask extends Task<result_mfc> {
+        private final String cookies;
+        private final String search_text;
+        private boolean isCheckBox_check;
+
+
+        public MfcTask(String cookies, String search_text, boolean isCheckBox_check) {
+            this.cookies = cookies;
+            this.search_text=search_text;
+            this.isCheckBox_check=isCheckBox_check;
+
+        }
+        @Override
+        protected result_mfc call() throws Exception {
+            String result_json= Get_data_mfc(cookies, search_text, isCheckBox_check);
+
+            result_mfc parsed_result= Parsing_json_mfc(result_json);
+
+            return parsed_result;
+        }
+    }
+
     // Функция получения данных по мфц
-    public String Get_data_mfc(String cookie, String search, boolean isCheckBox_check) throws IOException {
+    public static String Get_data_mfc(String cookie, String search, boolean isCheckBox_check) throws IOException {
         // Хранилище куки
         CookieStore httpCookieStore = new BasicCookieStore();
         //String search="";
@@ -73,7 +96,7 @@ public class MfcController {
         //return gson.toJson(payload_departm);
     }
     // Функция для парсинга данных с мфц
-    public result_mfc Parsing_json_mfc(String json){
+    public static result_mfc Parsing_json_mfc(String json){
         // Создания экземпляра парсинга
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(json); // Получение главного элемента
@@ -303,7 +326,7 @@ public class MfcController {
 
     }
     // Класс для возвращения списка мфц, кол-во всех мфц
-    public class result_mfc {
+    public static class result_mfc {
 
         private ArrayList<DataMfc_Model> data_mfcArr;
         private int count_MfcAll;
