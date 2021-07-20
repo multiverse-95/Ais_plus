@@ -242,14 +242,15 @@ public class appController {
     public void Show_mfc(String cookie_value) {
         // Событие на кнопку показать мфц
         show_mfc_b.setOnAction(event -> {
+            // если нет результатов
             data_table_mfc.setItems(null);
             Label label_empty=new Label();
             label_empty.setText("Ничего не найдено!");
             label_empty.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
-            data_table_mfc.setPlaceholder(label_empty); // если нет результатов
+            data_table_mfc.setPlaceholder(label_empty);
             MfcController mfcController = new MfcController();
             String result_json= null;
-            String search= search_mfc_t.getText(); // Считать с кнопки поиска
+            String search= search_mfc_t.getText(); // Считать с текстс поля поиска
             boolean isCheckbox; // Если поставлен чекбокс с только работающим МФЦ
             if (onlyWorkMFC_ch.isSelected()){
                 isCheckbox=true;
@@ -342,14 +343,17 @@ public class appController {
         }
         // Вызов экземпляра класса контроллера услуг
         ServiceController serviceController = new ServiceController();
-        // Если услуги не найдены
-        //data_table.setPlaceholder(new Label("Ничего не найдено!"));
-        String search_text =search_t.getText(); // Получение значени с текстового поля поиска
+        String search_text =search_t.getText(); // Получение значения с текстового поля поиска
         System.out.println(search_text);
-        // Получение количество всех услуг на сервере
 
+        // Установка размера для столбцов таблицы
+        id_usl.prefWidthProperty().bind(data_table.widthProperty().multiply(0.12));
+        name_usl.prefWidthProperty().bind(data_table.widthProperty().multiply(0.88));
+
+        //id_usl.setResizable(false);
+        //name_usl.setResizable(false);
         data_table.setItems(null);
-
+        // Запуск ПрогрессИндикатора
         ProgressIndicator pi = new ProgressIndicator();
         VBox box = new VBox(pi);
         box.setAlignment(Pos.CENTER);
@@ -361,21 +365,24 @@ public class appController {
         label_load.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
         data_table.setPlaceholder(label_load);
         root_usl.getChildren().add(box);
-
+        // Инициализация потока с получением услуг с сервера
         Task ServiceTask = new ServiceController.ServiceTask(cookie_value,search_text , 25, isCheckBox_check);
 
 
-        //SetOnSucceeded methode
+        // После выполнения потока
         ServiceTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
+                // Получение результа после выполнения потока
                 ServiceController.result_service parsed_result= (ServiceController.result_service) ServiceTask.getValue();
+                // Закрытие прогресс индикатора
                 box.setDisable(true);
                 pi.setVisible(false);
                 vbox_usl_main.setDisable(false);
                 data_table.setDisable(false);
                 count_uslAll_t.setText(String.valueOf(parsed_result.getAllUslug())); // Установка количества всех услуг для поля Все услуги
                 count_uslAct_t.setText(String.valueOf(parsed_result.getActualUslug())); // Установка количества актуальных услуг для поля Актуальные услуги
+                // Если ничего не найдено
                 if (parsed_result.getActualUslug()==0){
                     Label label_empty=new Label();
                     label_empty.setText("Ничего не найдено!");
@@ -403,8 +410,7 @@ public class appController {
             }
         });
 
-        //bind progress bar to both task progress property
-
+        // Запуск потока
         Thread serviceThread = new Thread(ServiceTask);
         serviceThread.start();
 
@@ -416,6 +422,10 @@ public class appController {
             // Если открыта вкладка Ведомства в АИС
             departm_tab.setOnSelectionChanged(event -> {
                 if (departm_tab.isSelected()){
+                    // Установка ширины столбцов для таблицы
+                    id_departm.prefWidthProperty().bind(data_table_departm.widthProperty().multiply(0.2));
+                    name_departm.prefWidthProperty().bind(data_table_departm.widthProperty().multiply(0.8));
+
                     // Вызвать контроллер класс по ведомствам
                     DepartmController departmController = new DepartmController();
                     System.out.println("Count_departm: "+count_DepartmAll_t.getText());
@@ -426,13 +436,13 @@ public class appController {
                         label_empty.setText("Ничего не найдено!");
                         label_empty.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
                         data_table_departm.setPlaceholder(label_empty);
-                        String search_text =search_t.getText(); // Получить значение с текстового поля
+                        //String search_text =search_t.getText(); // Получить значение с текстового поля
                         //System.out.println(search_text);
 
-                        String search_text_depart=search_departm_t.getText();
+                        String search_text_depart=search_departm_t.getText(); // Получить значение с текстового поля
 
                         data_table_departm.setItems(null);
-                        ProgressIndicator pi = new ProgressIndicator();
+                        ProgressIndicator pi = new ProgressIndicator(); // Запуск прогресс индикатора
                         VBox box = new VBox(pi);
                         box.setAlignment(Pos.CENTER);
                         data_table_departm.setDisable(true);
@@ -440,22 +450,24 @@ public class appController {
                         label_load.setText("Загрузка данных...");
                         label_load.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
                         data_table_departm.setPlaceholder(label_load);
-                        // Grey Background
+
                         vbox_departm_main.setDisable(true);
                         root_depart.getChildren().add(box);
+                        // Инициализация потока для ведомств
                         Task DepartmTask = new DepartmController.DepartmTask(cookie_value,search_text_depart);
 
-                        //SetOnSucceeded methode
+                        //  После выполнения потока
                         DepartmTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                             @Override
                             public void handle(WorkerStateEvent event) {
                                 // Получение распарсенных данных по ведомствам МфЦ
                                 DepartmController.result_departm parsed_result= (DepartmController.result_departm) DepartmTask.getValue();
-
+                                // Закрытие прогресс индикатора
                                 box.setDisable(true);
                                 pi.setVisible(false);
                                 vbox_departm_main.setDisable(false);
                                 data_table_departm.setDisable(false);
+                                // Получение данных с распарсенного поля
                                 ArrayList<DataDepartm_Model> parsed_result_arr=  parsed_result.getData_departmArr();
                                 //ArrayList<DataDepartm_Model> parsed_result_arr=  Parsing_json_depart(result_json);
                                 //System.out.println("Parsed data:\n"+ parsed_result.get(0).getNameUslug());
@@ -538,8 +550,7 @@ public class appController {
                             }
                         });
 
-                        //bind progress bar to both task progress property
-
+                        // Запуск потока
                         Thread serviceThread = new Thread(DepartmTask);
                         serviceThread.start();
 
@@ -553,6 +564,9 @@ public class appController {
         // Если выбрана вкладка по МФЦ
         mfc_tab.setOnSelectionChanged(event -> {
             if (mfc_tab.isSelected()){
+                // Установка ширины таблицы
+                id_mfc.prefWidthProperty().bind(data_table_mfc.widthProperty().multiply(0.12));
+                name_mfc.prefWidthProperty().bind(data_table_mfc.widthProperty().multiply(0.88));
                 // Создание Экземпляра класса по МФЦ
                 MfcController mfcController = new MfcController();
                 System.out.println("Count_mfc_tab: "+count_mfcAll_t.getText());
@@ -572,6 +586,7 @@ public class appController {
                     }
 
                     data_table_mfc.setItems(null);
+                    // Запуск прогресс индикатора
                     ProgressIndicator pi = new ProgressIndicator();
                     VBox box = new VBox(pi);
                     box.setAlignment(Pos.CENTER);
@@ -583,21 +598,22 @@ public class appController {
                     // Grey Background
                     vbox_mfc_main.setDisable(true);
                     root_mfc.getChildren().add(box);
-
+                    // Инициализация потока с получением данных по МФЦ
                     Task MfcTask = new MfcController.MfcTask(cookie_value, search, isCheckbox);
 
-                    //SetOnSucceeded methode
+                    // После выполнения потока
                     MfcTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                         @Override
                         public void handle(WorkerStateEvent event) {
                             // Получение распарсенных данных по мфц
                             MfcController.result_mfc parsed_result= (MfcController.result_mfc) MfcTask.getValue();
-
+                            // Закрытие прогресса индикации
                             box.setDisable(true);
                             pi.setVisible(false);
                             vbox_mfc_main.setDisable(false);
                             data_table_mfc.setDisable(false);
                             count_mfcAll_t.setText(String.valueOf(parsed_result.getAllMfc())); // Установка количества
+                            // Если МФЦ не нашлись
                             if (parsed_result.getAllMfc()==0){
                                 Label label_empty=new Label();
                                 label_empty.setText("Ничего не найдено!");
@@ -625,8 +641,7 @@ public class appController {
                         }
                     });
 
-                    //bind progress bar to both task progress property
-
+                    // Запуск потока
                     Thread serviceThread = new Thread(MfcTask);
                     serviceThread.start();
 

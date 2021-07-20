@@ -24,7 +24,7 @@ public class Accrual_Model {
     private SimpleStringProperty Cbc; // кбк
     private SimpleStringProperty Urn; // Урн
     private SimpleStringProperty CbcSection; // Код кбк
-    private SimpleStringProperty PreCheckRequired; // Пречер
+    private SimpleStringProperty PreCheckRequired; // Пречерк
     private SimpleStringProperty Purpose; // Назначение платежа
 
 
@@ -184,22 +184,3 @@ public class Accrual_Model {
 
 }
 
-/*
-        System.out.println("id: "+parsed_result_arr.get(0).getIdAccr()+"\n"+
-                "idPaym: "+parsed_result_arr.get(0).getIdPayment()+"\n"+
-                "displayName: "+parsed_result_arr.get(0).getDisplayName()+"\n"+
-                "name: "+parsed_result_arr.get(0).getName()+"\n"+
-                "bankName: "+parsed_result_arr.get(0).getBankName()+"\n"+
-                "personalAccount: "+parsed_result_arr.get(0).getPersonalAccount()+"\n"+
-                "correspAccount: "+parsed_result_arr.get(0).getCorrespAccount()+"\n"+
-                "bic: "+parsed_result_arr.get(0).getBic()+"\n"+
-                "kpp: "+parsed_result_arr.get(0).getKpp()+"\n"+
-                "inn: "+parsed_result_arr.get(0).getInn()+"\n"+
-                "regType: "+parsed_result_arr.get(0).getRegType()+"\n"+
-                "oktmo: "+parsed_result_arr.get(0).getOktmo()+"\n"+
-                "cbc: "+parsed_result_arr.get(0).getCbc()+"\n"+
-                "urn: "+parsed_result_arr.get(0).getUrn()+"\n"+
-                "cbcSection: "+parsed_result_arr.get(0).getCbcSection()+"\n"+
-                "preCheckRequired: "+parsed_result_arr.get(0).getPreCheckRequired()+"\n"+
-                "purpose: "+parsed_result_arr.get(0).getPurpose()+"\n");
-        */
