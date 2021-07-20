@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -17,267 +18,300 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1031.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ais_plus.appController">
     <children>
-      <TabPane prefHeight="750.0" prefWidth="1031.0" stylesheets="@tabPane_style.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane maxHeight="1.7976931348623157E308" prefHeight="750.0" prefWidth="1031.0" stylesheets="@tabPane_style.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
           <Tab text="Услуги">
                <content>
-                  <StackPane fx:id="root_usl">
-                     <children>
-                        <VBox fx:id="vbox_usl_main" alignment="CENTER">
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <top>
+                        <StackPane fx:id="root_usl" maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
                            <children>
-                                  <Label alignment="TOP_CENTER" style="-fx-text-fill: #2F4F4F;" text="Услуги в АИС">
-                                      <font>
-                                          <Font name="Arial Rounded MT Bold" size="24.0" />
-                                      </font>
-                              </Label>
-                              <HBox prefHeight="100.0" prefWidth="200.0">
+                              <VBox fx:id="vbox_usl_main" alignment="CENTER" maxHeight="1.7976931348623157E308" prefHeight="180.0" prefWidth="1031.0">
                                  <children>
-                                    <VBox alignment="TOP_CENTER" maxWidth="300.0" prefHeight="200.0" prefWidth="150.0">
+                                        <Label alignment="TOP_CENTER" style="-fx-text-fill: #2F4F4F;" text="Услуги в АИС">
+                                            <font>
+                                                <Font name="Arial Rounded MT Bold" size="24.0" />
+                                            </font>
+                                    </Label>
+                                    <VBox alignment="CENTER">
                                        <children>
-                                          <Label text="Всего услуг в АИС:">
-                                             <font>
-                                                <Font name="Arial Rounded MT Bold" size="16.0" />
-                                             </font>
-                                             <VBox.margin>
-                                                <Insets bottom="5.0" />
-                                             </VBox.margin>
-                                          </Label>
-                                          <Label maxWidth="300.0" minHeight="30.0" prefHeight="30.0" prefWidth="150.0" text="Актуальные услуги:">
-                                             <font>
-                                                <Font name="Arial Rounded MT Bold" size="16.0" />
-                                             </font>
-                                             <VBox.margin>
-                                                <Insets bottom="5.0" />
-                                             </VBox.margin>
-                                          </Label>
-                                          <Button fx:id="download_usl_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Отчёт по услугам">
+                                          <CheckBox fx:id="onlyActual_ch" mnemonicParsing="false" selected="true" text="Только актуальные">
                                              <font>
                                                 <Font name="Arial Rounded MT Bold" size="15.0" />
                                              </font>
                                              <VBox.margin>
                                                 <Insets />
                                              </VBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                    </VBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox alignment="TOP_CENTER">
+                                             <children>
+                                                <Label prefHeight="25.0" text="Всего услуг в АИС:">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="16.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </VBox.margin>
+                                                </Label>
+                                                <Label maxWidth="300.0" minHeight="30.0" prefHeight="25.0" prefWidth="150.0" text="Актуальные услуги:">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="16.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </VBox.margin>
+                                                </Label>
+                                                <Button fx:id="download_usl_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Отчёт по услугам">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="15.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                </Button>
+                                             </children>
+                                          </VBox>
+                                          <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefWidth="110.0">
+                                             <children>
+                                                <TextField fx:id="count_uslAll_t" prefHeight="25.0" style="-fx-background-radius: 20;">
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </VBox.margin>
+                                                </TextField>
+                                                <TextField fx:id="count_uslAct_t" prefHeight="25.0" style="-fx-background-radius: 20;">
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </VBox.margin>
+                                                </TextField>
+                                                <Button fx:id="add_accrual_b" mnemonicParsing="false" prefHeight="27.0" style="-fx-background-radius: 20;" text="Начисления">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="15.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </VBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label text="Фильтр:">
+                                             <font>
+                                                <Font name="Arial Rounded MT Bold" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="search_t" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="632.0" promptText="Введите название услуги" style="-fx-background-radius: 20;">
+                                             <HBox.margin>
+                                                <Insets left="5.0" />
+                                             </HBox.margin>
+                                          </TextField>
+                                          <Button fx:id="show_usl_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Применить фильтр">
+                                             <font>
+                                                <Font name="Arial Rounded MT Bold" size="15.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" />
+                                             </HBox.margin>
                                           </Button>
                                        </children>
-                                    </VBox>
-                                    <VBox layoutX="10.0" layoutY="10.0" prefWidth="120.0">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </StackPane>
+                     </top>
+                     <center>
+                        <TableView fx:id="data_table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="550.0" prefWidth="1031.0" BorderPane.alignment="CENTER">
+                          <columns>
+                            <TableColumn fx:id="id_usl" prefWidth="125.0" text="eid" />
+                            <TableColumn fx:id="name_usl" prefWidth="878.0" text="name" />
+                          </columns>
+                        </TableView>
+                     </center>
+                  </BorderPane>
+               </content>
+          </Tab>
+          <Tab fx:id="departm_tab" text="Ведомства">
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <top>
+                        <StackPane fx:id="root_depart" BorderPane.alignment="CENTER">
+                           <children>
+                              <VBox fx:id="vbox_departm_main" alignment="CENTER" prefWidth="100.0">
+                                 <children>
+                                    <Label style="-fx-text-fill: #2F4F4F;" text="Ведомства в АИС">
+                                       <font>
+                                          <Font name="Arial Rounded MT Bold" size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox>
                                        <children>
-                                          <TextField fx:id="count_uslAll_t" maxHeight="30.0" minHeight="20.0" prefHeight="25.0" prefWidth="81.0" style="-fx-background-radius: 20;">
-                                             <VBox.margin>
-                                                <Insets bottom="5.0" />
-                                             </VBox.margin>
+                                          <VBox alignment="TOP_CENTER">
+                                             <children>
+                                                <Label prefHeight="25.0" text="Всего ведомств в АИС:">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="16.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </VBox.margin>
+                                                </Label>
+                                                <Button fx:id="download_departm_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Отчёт по ведомствам">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="15.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                          </VBox>
+                                          <VBox alignment="TOP_CENTER">
+                                             <children>
+                                                <TextField fx:id="count_DepartmAll_t" maxWidth="70.0" prefHeight="25.0" style="-fx-background-radius: 20;" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label text="Фильтр:">
+                                             <font>
+                                                <Font name="Arial Rounded MT Bold" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="search_departm_t" prefHeight="25.0" prefWidth="609.0" promptText="Введите название ведомства" style="-fx-background-radius: 20;">
+                                             <HBox.margin>
+                                                <Insets right="5.0" />
+                                             </HBox.margin>
                                           </TextField>
-                                          <TextField fx:id="count_uslAct_t" style="-fx-background-radius: 20;">
-                                             <VBox.margin>
-                                                <Insets bottom="5.0" />
-                                             </VBox.margin>
-                                          </TextField>
-                                          <Button fx:id="add_accrual_b" mnemonicParsing="false" prefHeight="27.0" prefWidth="151.0" style="-fx-background-radius: 20;" text="Начисления">
+                                          <Button fx:id="show_departm" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Применить фильтр">
                                              <font>
                                                 <Font name="Arial Rounded MT Bold" size="15.0" />
                                              </font>
                                           </Button>
                                        </children>
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </VBox>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets left="10.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <VBox alignment="CENTER">
-                                 <children>
-                                    <CheckBox fx:id="onlyActual_ch" mnemonicParsing="false" selected="true" text="Только актуальные">
-                                       <font>
-                                          <Font name="Arial Rounded MT Bold" size="15.0" />
-                                       </font>
                                        <VBox.margin>
-                                          <Insets />
+                                          <Insets bottom="10.0" top="10.0" />
                                        </VBox.margin>
-                                    </CheckBox>
+                                    </HBox>
                                  </children>
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
                               </VBox>
-                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                                 <children>
-                                    <Label text="Фильтр:">
-                                       <font>
-                                          <Font name="Arial Rounded MT Bold" size="15.0" />
-                                       </font>
-                                    </Label>
-                                    <TextField fx:id="search_t" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="632.0" promptText="Введите название услуги" style="-fx-background-radius: 20;">
-                                       <HBox.margin>
-                                          <Insets left="5.0" />
-                                       </HBox.margin></TextField>
-                                    <Button fx:id="show_usl_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Применить фильтр">
-                                       <font>
-                                          <Font name="Arial Rounded MT Bold" size="15.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets left="5.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                              </HBox>
-                              <TableView fx:id="data_table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="570.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="70.0">
-                                <columns>
-                                  <TableColumn fx:id="id_usl" prefWidth="125.0" text="eid" />
-                                  <TableColumn fx:id="name_usl" prefWidth="878.0" text="name" />
-                                </columns>
-                              </TableView>
                            </children>
-                        </VBox>
-                     </children>
-                  </StackPane>
-               </content>
-          </Tab>
-          <Tab fx:id="departm_tab" text="Ведомства">
-               <content>
-                  <StackPane fx:id="root_depart" prefHeight="150.0" prefWidth="200.0">
-                     <children>
-                        <VBox fx:id="vbox_departm_main" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Label style="-fx-text-fill: #2F4F4F;" text="Ведомства в АИС">
-                                 <font>
-                                    <Font name="Arial Rounded MT Bold" size="24.0" />
-                                 </font>
-                              </Label>
-                              <HBox>
-                                 <children>
-                                    <Label prefHeight="25.0" text="Всего ведомств в АИС:">
-                                       <font>
-                                          <Font name="Arial Rounded MT Bold" size="16.0" />
-                                       </font>
-                                    </Label>
-                                    <TextField fx:id="count_DepartmAll_t" maxWidth="70.0" prefHeight="25.0" style="-fx-background-radius: 20;" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets left="10.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <HBox alignment="CENTER">
-                                 <children>
-                                    <Button fx:id="download_departm_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Отчёт по ведомствам">
-                                       <font>
-                                          <Font name="Arial Rounded MT Bold" size="15.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets right="5.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                    <Label text="Фильтр:">
-                                       <font>
-                                          <Font name="Arial Rounded MT Bold" size="15.0" />
-                                       </font>
-                                    </Label>
-                                    <TextField fx:id="search_departm_t" prefHeight="25.0" prefWidth="609.0" promptText="Введите название ведомства" style="-fx-background-radius: 20;">
-                                       <HBox.margin>
-                                          <Insets right="5.0" />
-                                       </HBox.margin>
-                                    </TextField>
-                                    <Button fx:id="show_departm" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Применить фильтр">
-                                       <font>
-                                          <Font name="Arial Rounded MT Bold" size="15.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="10.0" top="10.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <TableView fx:id="data_table_departm" editable="true" prefHeight="570.0" prefWidth="1004.0">
-                                 <columns>
-                                    <TableColumn fx:id="id_departm" prefWidth="182.0" text="id" />
-                                    <TableColumn fx:id="name_departm" prefWidth="821.0" text="name" />
-                                 </columns>
-                              </TableView>
-                           </children>
-                        </VBox>
-                     </children>
-                  </StackPane>
+                        </StackPane>
+                     </top>
+                     <center>
+                        <TableView fx:id="data_table_departm" editable="true" prefHeight="650.0" prefWidth="1031.0" BorderPane.alignment="CENTER">
+                           <columns>
+                              <TableColumn fx:id="id_departm" prefWidth="182.0" text="id" />
+                              <TableColumn fx:id="name_departm" prefWidth="821.0" text="name" />
+                           </columns>
+                        </TableView>
+                     </center>
+                  </BorderPane>
                </content>
           </Tab>
             <Tab fx:id="mfc_tab" text="МФЦ">
                <content>
-                  <StackPane fx:id="root_mfc" prefHeight="150.0" prefWidth="200.0">
-                     <children>
-                        <VBox fx:id="vbox_mfc_main" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <top>
+                        <StackPane fx:id="root_mfc" BorderPane.alignment="CENTER">
                            <children>
-                              <Label style="-fx-text-fill: #2F4F4F;" text="Список МФЦ">
-                                 <font>
-                                    <Font name="Arial Rounded MT Bold" size="24.0" />
-                                 </font>
-                              </Label>
-                              <HBox prefHeight="50.0">
+                              <VBox fx:id="vbox_mfc_main" alignment="CENTER">
                                  <children>
-                                    <Label text="Всего МФЦ в АИС:">
+                                    <Label style="-fx-text-fill: #2F4F4F;" text="Список МФЦ">
                                        <font>
-                                          <Font name="Arial Rounded MT Bold" size="16.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets left="5.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                    <TextField fx:id="count_mfcAll_t" prefHeight="25.0" prefWidth="81.0" style="-fx-background-radius: 20;" />
-                                    <HBox prefHeight="100.0" prefWidth="200.0" />
-                                 </children>
-                              </HBox>
-                              <CheckBox fx:id="onlyWorkMFC_ch" mnemonicParsing="false" selected="true" text="Только рабочие МФЦ">
-                                 <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" />
-                                 </VBox.margin>
-                              </CheckBox>
-                              <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0">
-                                 <children>
-                                    <Button fx:id="download_mfc_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Отчёт по МФЦ">
-                                       <font>
-                                          <Font name="Arial Rounded MT Bold" size="15.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets right="5.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                    <Label text="Фильтр:">
-                                       <font>
-                                          <Font name="Arial Rounded MT Bold" size="15.0" />
+                                          <Font name="Arial Rounded MT Bold" size="24.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="search_mfc_t" prefHeight="25.0" prefWidth="650.0" promptText="Введите название МФЦ" style="-fx-background-radius: 20;">
-                                       <HBox.margin>
-                                          <Insets right="5.0" />
-                                       </HBox.margin>
-                                    </TextField>
-                                    <Button fx:id="show_mfc_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Применить фильтр">
+                                    <CheckBox fx:id="onlyWorkMFC_ch" mnemonicParsing="false" selected="true" text="Только рабочие МФЦ">
                                        <font>
                                           <Font name="Arial Rounded MT Bold" size="15.0" />
                                        </font>
-                                    </Button>
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" top="5.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
+                                    <HBox>
+                                       <children>
+                                          <VBox alignment="TOP_CENTER">
+                                             <children>
+                                                <Label prefHeight="25.0" text="Всего МФЦ в АИС:">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="16.0" />
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </VBox.margin>
+                                                </Label>
+                                                <Button fx:id="download_mfc_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Отчёт по МФЦ">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="15.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                          </VBox>
+                                          <VBox alignment="TOP_CENTER">
+                                             <children>
+                                                <TextField fx:id="count_mfcAll_t" prefHeight="25.0" prefWidth="70.0" style="-fx-background-radius: 20;" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0">
+                                       <children>
+                                          <Label text="Фильтр:">
+                                             <font>
+                                                <Font name="Arial Rounded MT Bold" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="search_mfc_t" prefHeight="25.0" prefWidth="650.0" promptText="Введите название МФЦ" style="-fx-background-radius: 20;">
+                                             <HBox.margin>
+                                                <Insets right="5.0" />
+                                             </HBox.margin>
+                                          </TextField>
+                                          <Button fx:id="show_mfc_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Применить фильтр">
+                                             <font>
+                                                <Font name="Arial Rounded MT Bold" size="15.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </HBox>
                                  </children>
-                              </HBox>
-                              <TableView fx:id="data_table_mfc" editable="true" prefHeight="570.0" prefWidth="1004.0">
-                                 <columns>
-                                    <TableColumn fx:id="id_mfc" prefWidth="125.0" text="id" />
-                                    <TableColumn fx:id="name_mfc" prefWidth="878.0" text="name" />
-                                 </columns>
-                              </TableView>
+                              </VBox>
                            </children>
-                        </VBox>
-                     </children>
-                  </StackPane>
+                        </StackPane>
+                     </top>
+                     <center>
+                        <TableView fx:id="data_table_mfc" editable="true" prefHeight="570.0" prefWidth="1004.0" BorderPane.alignment="CENTER">
+                           <columns>
+                              <TableColumn fx:id="id_mfc" prefWidth="125.0" text="id" />
+                              <TableColumn fx:id="name_mfc" prefWidth="878.0" text="name" />
+                           </columns>
+                        </TableView>
+                     </center>
+                  </BorderPane>
                </content>
             </Tab>
         </tabs>
       </TabPane>
-      <TextField fx:id="count_usl_t" disable="true" prefHeight="5.0" prefWidth="81.0" style="-fx-background-radius: 20;" text="70" visible="false" />
     </children>
 </AnchorPane>

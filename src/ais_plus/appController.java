@@ -29,6 +29,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ais_plus.model.DataDepartm_Model;
@@ -88,9 +91,6 @@ public class appController {
 
     @FXML
     private Button add_accrual_b;
-
-    @FXML
-    private TextField count_usl_t;
 
     @FXML
     private TextField search_t;
@@ -242,7 +242,11 @@ public class appController {
     public void Show_mfc(String cookie_value) {
         // Событие на кнопку показать мфц
         show_mfc_b.setOnAction(event -> {
-            data_table_mfc.setPlaceholder(new Label("Ничего не найдено!")); // если нет результатов
+            data_table_mfc.setItems(null);
+            Label label_empty=new Label();
+            label_empty.setText("Ничего не найдено!");
+            label_empty.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+            data_table_mfc.setPlaceholder(label_empty); // если нет результатов
             MfcController mfcController = new MfcController();
             String result_json= null;
             String search= search_mfc_t.getText(); // Считать с кнопки поиска
@@ -283,7 +287,11 @@ public class appController {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER)  {
-                    data_table_mfc.setPlaceholder(new Label("Ничего не найдено!"));
+                    data_table_mfc.setItems(null);
+                    Label label_empty=new Label();
+                    label_empty.setText("Ничего не найдено!");
+                    label_empty.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+                    data_table_mfc.setPlaceholder(label_empty);
                     MfcController mfcController = new MfcController();
                     String result_json= null;
                     String search= search_mfc_t.getText(); // Получение значения с текстового поля
@@ -335,32 +343,27 @@ public class appController {
         // Вызов экземпляра класса контроллера услуг
         ServiceController serviceController = new ServiceController();
         // Если услуги не найдены
-        data_table.setPlaceholder(new Label("Ничего не найдено!"));
+        //data_table.setPlaceholder(new Label("Ничего не найдено!"));
         String search_text =search_t.getText(); // Получение значени с текстового поля поиска
         System.out.println(search_text);
-        int limit_usl=0; // Лимит услуг
         // Получение количество всех услуг на сервере
 
+        data_table.setItems(null);
 
         ProgressIndicator pi = new ProgressIndicator();
         VBox box = new VBox(pi);
         box.setAlignment(Pos.CENTER);
         // Grey Background
         vbox_usl_main.setDisable(true);
+        data_table.setDisable(true);
+        Label label_load=new Label();
+        label_load.setText("Загрузка данных...");
+        label_load.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+        data_table.setPlaceholder(label_load);
         root_usl.getChildren().add(box);
 
         Task ServiceTask = new ServiceController.ServiceTask(cookie_value,search_text , 25, isCheckBox_check);
 
-/*
-        limit_usl=  serviceController.Total_usl_from_serv(serviceController.Get_data_uslug(cookie_value, search_text, 25));
-        System.out.println("LIMIT_uslug " +limit_usl);
-        // Получение json услуг
-        String result_json= serviceController.Get_data_uslug(cookie_value, search_text, limit_usl);
-
-        //System.out.println(result_json);
-        // Получение распарсенных данных по услугам
-        ServiceController.result_service parsed_result= serviceController.Parsing_json_uslug(result_json, limit_usl, isCheckBox_check);
-*/
 
         //SetOnSucceeded methode
         ServiceTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -370,9 +373,15 @@ public class appController {
                 box.setDisable(true);
                 pi.setVisible(false);
                 vbox_usl_main.setDisable(false);
+                data_table.setDisable(false);
                 count_uslAll_t.setText(String.valueOf(parsed_result.getAllUslug())); // Установка количества всех услуг для поля Все услуги
                 count_uslAct_t.setText(String.valueOf(parsed_result.getActualUslug())); // Установка количества актуальных услуг для поля Актуальные услуги
-
+                if (parsed_result.getActualUslug()==0){
+                    Label label_empty=new Label();
+                    label_empty.setText("Ничего не найдено!");
+                    label_empty.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+                    data_table.setPlaceholder(label_empty);
+                }
                 // Создание списка с данными по услугам
                 ArrayList<DataUslug_Model> parsed_result_arr= parsed_result.getData_uslugArr();
                 ObservableList<DataUslug_Model> dataUslug_models = FXCollections.observableArrayList(parsed_result_arr);
@@ -413,20 +422,24 @@ public class appController {
                     // Если вкладка с ведомствами открылась в первый раз
                     if (count_DepartmAll_t.getText().isEmpty()){
                         // Если ведомства не найдены
-                        data_table_departm.setPlaceholder(new Label("Ничего не найдено!"));
+                        Label label_empty=new Label();
+                        label_empty.setText("Ничего не найдено!");
+                        label_empty.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+                        data_table_departm.setPlaceholder(label_empty);
                         String search_text =search_t.getText(); // Получить значение с текстового поля
                         //System.out.println(search_text);
-                        String count_uslugs= count_usl_t.getText(); // Установка количества услуг для текстового поля
+
                         String search_text_depart=search_departm_t.getText();
 
-                        int limit_usl=Integer.parseInt(count_uslugs);
-
-
-                        String result_json= null;
-
+                        data_table_departm.setItems(null);
                         ProgressIndicator pi = new ProgressIndicator();
                         VBox box = new VBox(pi);
                         box.setAlignment(Pos.CENTER);
+                        data_table_departm.setDisable(true);
+                        Label label_load=new Label();
+                        label_load.setText("Загрузка данных...");
+                        label_load.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+                        data_table_departm.setPlaceholder(label_load);
                         // Grey Background
                         vbox_departm_main.setDisable(true);
                         root_depart.getChildren().add(box);
@@ -442,13 +455,14 @@ public class appController {
                                 box.setDisable(true);
                                 pi.setVisible(false);
                                 vbox_departm_main.setDisable(false);
+                                data_table_departm.setDisable(false);
                                 ArrayList<DataDepartm_Model> parsed_result_arr=  parsed_result.getData_departmArr();
                                 //ArrayList<DataDepartm_Model> parsed_result_arr=  Parsing_json_depart(result_json);
                                 //System.out.println("Parsed data:\n"+ parsed_result.get(0).getNameUslug());
                                 ObservableList<DataDepartm_Model> dataDepartm_models = FXCollections.observableArrayList(parsed_result_arr);
                                 // Получение списка всех ведомств и заполнение в текстовое поле
                                 count_DepartmAll_t.setText(String.valueOf(parsed_result.getAllDepartm()));
-                                // Заполение данными таблицы
+                                // Заполнение данными таблицы
                                 id_departm.setCellValueFactory(new PropertyValueFactory<>("IdDepartm"));
                                 id_departm.setCellFactory(TextFieldTableCell.<DataDepartm_Model>forTableColumn());
                                 name_departm.setCellValueFactory(new PropertyValueFactory<>("NameDepartm"));
@@ -472,8 +486,10 @@ public class appController {
                                     });
                                     // Получение количества ведомств
                                     count_DepartmAll_t.setText(String.valueOf(parsed_result_arr_find.size()));
-
-                                    data_table_departm.setPlaceholder(new Label("Ничего не найдено!"));
+                                    Label label_empty=new Label();
+                                    label_empty.setText("Ничего не найдено!");
+                                    label_empty.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+                                    data_table_departm.setPlaceholder(label_empty);
 
                                     ObservableList<DataDepartm_Model> dataDepartm_models_find = FXCollections.observableArrayList(parsed_result_arr_find);
 
@@ -493,14 +509,17 @@ public class appController {
                                     @Override
                                     public void handle(KeyEvent keyEvent) {
                                         if (keyEvent.getCode() == KeyCode.ENTER)  {
+                                            data_table_departm.setItems(null);
                                             ArrayList<DataDepartm_Model> parsed_result_arr_find= departmController.Search_departm(parsed_result_arr,search_departm_t.getText());
                                             System.out.println("TEST SEARCH 111 "+ search_departm_t.getText());
                                             download_departm_b.setOnAction(event5 -> {
                                                 departmController.Download_departm(parsed_result_arr_find);
                                             });
                                             count_DepartmAll_t.setText(String.valueOf(parsed_result_arr_find.size()));
-
-                                            data_table_departm.setPlaceholder(new Label("Ничего не найдено!"));
+                                            Label label_empty=new Label();
+                                            label_empty.setText("Ничего не найдено!");
+                                            label_empty.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+                                            data_table_departm.setPlaceholder(label_empty);
 
                                             ObservableList<DataDepartm_Model> dataDepartm_models_find = FXCollections.observableArrayList(parsed_result_arr_find);
 
@@ -540,7 +559,7 @@ public class appController {
                 // Если список мфц не пуст
                 if (count_mfcAll_t.getText().isEmpty()){
                     // Если ничего не найдено
-                    data_table_mfc.setPlaceholder(new Label("Ничего не найдено!"));
+                    //data_table_mfc.setPlaceholder(new Label("Ничего не найдено!"));
 
                     String result_json= null;
                     String search= search_mfc_t.getText(); // Получение данных с текстового поля
@@ -552,9 +571,15 @@ public class appController {
                         isCheckbox = false;
                     }
 
+                    data_table_mfc.setItems(null);
                     ProgressIndicator pi = new ProgressIndicator();
                     VBox box = new VBox(pi);
                     box.setAlignment(Pos.CENTER);
+                    data_table_mfc.setDisable(true);
+                    Label label_load=new Label();
+                    label_load.setText("Загрузка данных...");
+                    label_load.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+                    data_table_mfc.setPlaceholder(label_load);
                     // Grey Background
                     vbox_mfc_main.setDisable(true);
                     root_mfc.getChildren().add(box);
@@ -571,7 +596,14 @@ public class appController {
                             box.setDisable(true);
                             pi.setVisible(false);
                             vbox_mfc_main.setDisable(false);
+                            data_table_mfc.setDisable(false);
                             count_mfcAll_t.setText(String.valueOf(parsed_result.getAllMfc())); // Установка количества
+                            if (parsed_result.getAllMfc()==0){
+                                Label label_empty=new Label();
+                                label_empty.setText("Ничего не найдено!");
+                                label_empty.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 18));
+                                data_table_mfc.setPlaceholder(label_empty);
+                            }
                             ArrayList<DataMfc_Model> parsed_result_arr = parsed_result.getData_mfcArr();
                             ObservableList<DataMfc_Model> dataMfc_models = FXCollections.observableArrayList(parsed_result_arr);
 
