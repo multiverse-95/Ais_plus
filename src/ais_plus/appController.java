@@ -15,10 +15,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -60,6 +62,27 @@ public class appController {
 
     @FXML
     private URL location;
+
+    @FXML
+    private MenuBar app_menuBar;
+    @FXML
+    private MenuItem menu_item_rep_service;
+
+    @FXML
+    private MenuItem menu_item_rep_departm;
+
+    @FXML
+    private MenuItem menu_item_rep_mfc;
+
+    @FXML
+    private MenuItem menu_item_change_user;
+
+    @FXML
+    private MenuItem menu_item_help;
+
+    @FXML
+    private MenuItem menu_item_about;
+
     @FXML
     private StackPane root_usl;
 
@@ -334,6 +357,7 @@ public class appController {
     }
     // Функция для отображения услуг
     public ArrayList<DataUslug_Model> Show_data_uslug(String cookie_value) throws IOException {
+
         boolean isCheckBox_check; // переменная для хранения значения, актуальные услуги или нет
         // Если чекбокс выбран, то установить значение переменной isCheckBox_check true, иначе false
         if (onlyActual_ch.isSelected()){
@@ -352,6 +376,7 @@ public class appController {
 
         //id_usl.setResizable(false);
         //name_usl.setResizable(false);
+        menu_item_rep_service.setDisable(true);
         data_table.setItems(null);
         // Запуск ПрогрессИндикатора
         ProgressIndicator pi = new ProgressIndicator();
@@ -380,6 +405,7 @@ public class appController {
                 pi.setVisible(false);
                 vbox_usl_main.setDisable(false);
                 data_table.setDisable(false);
+                menu_item_rep_service.setDisable(false);
                 count_uslAll_t.setText(String.valueOf(parsed_result.getAllUslug())); // Установка количества всех услуг для поля Все услуги
                 count_uslAct_t.setText(String.valueOf(parsed_result.getActualUslug())); // Установка количества актуальных услуг для поля Актуальные услуги
                 // Если ничего не найдено
@@ -407,19 +433,104 @@ public class appController {
                 download_usl_b.setOnAction(event2 -> {
                     serviceController.Download_uslugs(parsed_result_arr);
                 });
+
+                // When user click on the Exit item.
+                menu_item_rep_service.setOnAction(event_mi_rep_serv -> serviceController.Download_uslugs(parsed_result_arr));
+
             }
+        });
+
+        ServiceTask.setOnCancelled(event_cancel -> {
+            System.out.println("Cancel Task!!!");
         });
 
         // Запуск потока
         Thread serviceThread = new Thread(ServiceTask);
+        serviceThread.setDaemon(true);
         serviceThread.start();
+
+        // При нажатии на элемент меню "Сменить пользователя"
+        menu_item_change_user.setOnAction(event_change_user -> {
+            ServiceTask.cancel();
+            app_menuBar.getScene().getWindow().hide();// Скрываем окно авторизации
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/ais_plus/view/login.fxml"));
+            try {
+                loader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Parent root = loader.getRoot();
+            Stage stage = new Stage();
+            stage.setTitle("Ais plus");
+            stage.setResizable(false);
+            stage.setScene(new Scene(root, 400, 200));
+            stage.show();
+
+        });
+        // Показывает окно помощи
+        menu_item_help.setOnAction(event_help -> {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/ais_plus/view/help.fxml"));
+            try {
+                loader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Parent root = loader.getRoot();
+            Stage stage = new Stage();
+            stage.setTitle("Помощь");
+            stage.setResizable(false);
+            stage.setScene(new Scene(root, 600, 400));
+            stage.showAndWait();
+        });
+        // Показывает окно "О программе"
+        menu_item_about.setOnAction(event_about -> {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/ais_plus/view/about.fxml"));
+            try {
+                loader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Parent root = loader.getRoot();
+            Stage stage = new Stage();
+            stage.setTitle("О приложении");
+            stage.setResizable(false);
+            stage.setScene(new Scene(root, 545, 163));
+            stage.showAndWait();
+        });
+
+
 
         //return parsed_result;
         return null;
     }
     // Функция для отображение ведомств в АИС
     public void Show_data_Departm(String cookie_value) throws IOException {
-            // Если открыта вкладка Ведомства в АИС
+
+
+        // When user click on the Exit item.
+        menu_item_rep_departm.setOnAction(event_dep_rep -> {
+            DepartmController departmController = new DepartmController();
+            String search_text_depart=search_departm_t.getText(); // Получить значение с текстового поля
+            Task DepartmTask = new DepartmController.DepartmTask(cookie_value,search_text_depart);
+            //  После выполнения потока
+            DepartmTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    DepartmController.result_departm parsed_result= (DepartmController.result_departm) DepartmTask.getValue();
+                    ArrayList<DataDepartm_Model> parsed_result_arr=  parsed_result.getData_departmArr();
+                    departmController.Download_departm(parsed_result_arr);
+                }
+                });
+            // Запуск потока
+            Thread departmThread = new Thread(DepartmTask);
+            departmThread.setDaemon(true);
+            departmThread.start();
+        });
+        // Если открыта вкладка Ведомства в АИС
             departm_tab.setOnSelectionChanged(event -> {
                 if (departm_tab.isSelected()){
                     // Установка ширины столбцов для таблицы
@@ -551,8 +662,9 @@ public class appController {
                         });
 
                         // Запуск потока
-                        Thread serviceThread = new Thread(DepartmTask);
-                        serviceThread.start();
+                        Thread departmThread = new Thread(DepartmTask);
+                        departmThread.setDaemon(true);
+                        departmThread.start();
 
 
                     }
@@ -561,6 +673,34 @@ public class appController {
     }
     // Функция для заполнения данными по МФЦ
     public void Show_data_Mfc(String cookie_value) throws IOException {
+        // При выборе в меню скачать отчёт по мфц
+        menu_item_rep_mfc.setOnAction(event_dep_rep -> {
+            MfcController mfcController = new MfcController();
+            String search= search_mfc_t.getText(); // Получение данных с текстового поля
+            boolean isCheckbox;
+            // Если чекбокс выбран
+            if (onlyWorkMFC_ch.isSelected()){
+                isCheckbox=true;
+            } else {
+                isCheckbox = false;
+            }
+            // Поток по мфц
+            Task MfcTask = new MfcController.MfcTask(cookie_value, search, isCheckbox);
+            //  После выполнения потока
+            MfcTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    MfcController.result_mfc parsed_result= (MfcController.result_mfc) MfcTask.getValue();
+                    ArrayList<DataMfc_Model> parsed_result_arr = parsed_result.getData_mfcArr();
+                    mfcController.Download_mfc(parsed_result_arr);
+                }
+            });
+            // Запуск потока
+            Thread mfcThread = new Thread(MfcTask);
+            mfcThread.setDaemon(true);
+            mfcThread.start();
+        });
+
         // Если выбрана вкладка по МФЦ
         mfc_tab.setOnSelectionChanged(event -> {
             if (mfc_tab.isSelected()){
@@ -642,8 +782,9 @@ public class appController {
                     });
 
                     // Запуск потока
-                    Thread serviceThread = new Thread(MfcTask);
-                    serviceThread.start();
+                    Thread mfcThread = new Thread(MfcTask);
+                    mfcThread.setDaemon(true);
+                    mfcThread.start();
 
 
 

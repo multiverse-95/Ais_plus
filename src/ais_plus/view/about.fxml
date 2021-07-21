@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="163.0" prefWidth="545.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ais_plus.controller.AboutController">
+   <children>
+      <BorderPane prefHeight="163.0" prefWidth="545.0">
+         <top>
+            <Pane prefHeight="111.0" prefWidth="545.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label layoutX="176.0" layoutY="14.0" text="Версия приложения: 5.0">
+                     <font>
+                        <Font name="Arial Black" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="45.0" layoutY="41.0" prefHeight="29.0" prefWidth="455.0" text="Приложение показывает услуги, ведомства и мфц с сервера АИС." wrapText="true">
+                     <font>
+                        <Font name="Arial Rounded MT Bold" size="15.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="45.0" layoutY="70.0" prefHeight="29.0" prefWidth="455.0" text="Также есть возможность скачать отчёты и добавлять начисления." wrapText="true">
+                     <font>
+                        <Font name="Arial Rounded MT Bold" size="15.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+         </top>
+         <center>
+            <Label text="Разработчик: Вальков Вячеслав" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="Arial Black" size="15.0" />
+               </font>
+            </Label>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>
