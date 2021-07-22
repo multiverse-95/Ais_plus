@@ -13,3 +13,7 @@
 ![Alt text](/src/ais_plus/screenshots/Accruals.PNG "Скриншот начислений")
 ### Форма начислений:
 ![Alt text](/src/ais_plus/screenshots/CreateAccrual.PNG "Скриншот формы начислений")
+### Сохранение отчёта по услугам:
+![Alt text](/src/ais_plus/screenshots/ServicesDownload.PNG "Скриншот формы начислени")
+### Отчёт по услугам:
+![Alt text](/src/ais_plus/screenshots/ServiceReportExcel.PNG "Скриншот формы начислений")
