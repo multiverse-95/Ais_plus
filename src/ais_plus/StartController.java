@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import ais_plus.controller.MfcController;
 import ais_plus.model.DataMfc_Model;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -29,6 +30,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import ais_plus.controller.LoginController;
+import javafx.stage.WindowEvent;
 
 public class StartController {
     //private String cookie;
@@ -130,10 +132,34 @@ public class StartController {
 
                         // Запускаем основное окно программы АИС
                         Stage stage = new Stage();
+                        // Подтверждение выхода из приложения
+                        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                            public void handle(WindowEvent we) {
+                                System.out.println("Stage is closing");
+                                ButtonType yes_del = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE); // Создание кнопки подтвердить
+                                ButtonType no_del = new ButtonType("Нет", ButtonBar.ButtonData.CANCEL_CLOSE); // Создание кнопки отменить
+                                Alert alert =new Alert(Alert.AlertType.CONFIRMATION , "Test", yes_del, no_del);
+                                alert.setTitle("Выход из приложения"); // Название предупреждения
+                                alert.setHeaderText("Подтвердите выход из приложения!"); // Текст предупреждения
+                                alert.setContentText("Вы действительно хотите выйти из приложения?");
+                                // Вызов подтверждения элемента
+                                alert.showAndWait().ifPresent(rs -> {
+                                    if (rs == yes_del){
+                                        System.out.println("Exit!");
+                                        Platform.exit();
+                                        System.exit(0);
+                                    } else if(rs ==no_del){
+                                        we.consume();
+                                    }
+                                });
+                            }
+                        });
                         stage.setTitle("Ais Plus");
                         //stage.setResizable(false);
                         stage.setScene(new Scene(root));
                         stage.showAndWait();
+
+
 
                     } else {
                         // Иначе - если авторизация не удалась , то ошибка
