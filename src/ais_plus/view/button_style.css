@@ -1,0 +1,37 @@
+.my-btn-login-class {
+    -fx-background-radius: 20px;
+    -fx-background-color: #E1EDFF;
+    -fx-font-weight: Bold;
+    -fx-font-size: 15px;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.my-btn-login-class:hover {
+    -fx-border-style: none;
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
+    -fx-background-radius: 20px;
+    -fx-background-color: linear-gradient(#F0FFF0, #E1EDFF);
+    -fx-font-weight: Bold;
+    -fx-font-size: 15px;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.my-btn-app-class{
+    -fx-background-radius: 20px;
+    -fx-background-color: linear-gradient(#99ccff, #99bce8);
+    -fx-font-weight: Bold;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.my-btn-app-class:hover  {
+    -fx-background-color: linear-gradient(#99bce8,#e6e6fa);
+    -fx-font-weight: Bold;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+}
+
+
+

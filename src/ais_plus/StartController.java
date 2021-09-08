@@ -16,6 +16,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -62,6 +64,9 @@ public class StartController {
 
     @FXML
     void initialize() {
+        login_button.setOnMouseEntered(event_mouse -> {
+            ((Node) event_mouse.getSource()).setCursor(Cursor.HAND);
+        });
         // При нажатии на кнопку "Вход"
         login_button.setOnAction(event -> {
             Login_Ais(); // Вызов функции авторизации
@@ -125,7 +130,7 @@ public class StartController {
                             AppController.Show_data_uslug(cookie); // Вызов функции заполнения данных по услугам
                             AppController.Show_data_Departm(cookie); // Вызов функции заполнения данных по ведомствам
                             AppController.Show_data_Mfc(cookie); // Вызов функции заполнения данных по мфц
-                            AppController.Show_accruals(cookie); // Вызов функции для получения начислений по услуге
+                            //AppController.Show_accruals(cookie); // Вызов функции для получения начислений по услуге
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

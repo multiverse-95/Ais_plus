@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -19,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1031.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ais_plus.appController">
+<AnchorPane fx:id="main_anchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1031.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ais_plus.appController">
     <children>
       <MenuBar fx:id="app_menuBar" prefHeight="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
@@ -43,11 +44,11 @@
             </Menu>
         </menus>
       </MenuBar>
-      <TabPane layoutY="23.0" maxHeight="1.7976931348623157E308" prefHeight="750.0" prefWidth="1031.0" stylesheets="@tabPane_style.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="23.0">
+      <TabPane layoutY="23.0" maxHeight="1.7976931348623157E308" prefHeight="750.0" stylesheets="@tabPane_style.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="23.0">
         <tabs>
           <Tab text="Услуги">
                <content>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                  <BorderPane prefHeight="200.0">
                      <top>
                         <StackPane fx:id="root_usl" maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
                            <children>
@@ -93,7 +94,7 @@
                                                       <Insets bottom="5.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <Button fx:id="download_usl_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Отчёт по услугам">
+                                                <Button fx:id="download_usl_b" mnemonicParsing="false" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Отчёт по услугам">
                                                    <font>
                                                       <Font name="Arial Rounded MT Bold" size="15.0" />
                                                    </font>
@@ -115,7 +116,7 @@
                                                       <Insets bottom="5.0" />
                                                    </VBox.margin>
                                                 </TextField>
-                                                <Button fx:id="add_accrual_b" mnemonicParsing="false" prefHeight="27.0" style="-fx-background-radius: 20;" text="Начисления">
+                                                <Button fx:id="add_accrual_b" mnemonicParsing="false" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Начисления">
                                                    <font>
                                                       <Font name="Arial Rounded MT Bold" size="15.0" />
                                                    </font>
@@ -124,6 +125,25 @@
                                              <HBox.margin>
                                                 <Insets />
                                              </HBox.margin>
+                                          </VBox>
+                                          <VBox alignment="TOP_CENTER" layoutX="160.0" layoutY="10.0">
+                                             <children>
+                                                <TextField prefHeight="25.0" style="-fx-background-radius: 20;" visible="false">
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </VBox.margin>
+                                                </TextField>
+                                                <TextField prefHeight="25.0" style="-fx-background-radius: 20;" visible="false">
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </VBox.margin>
+                                                </TextField>
+                                                <Button fx:id="correct_with_site_b" mnemonicParsing="false" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Сравнение услуг">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="15.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
                                           </VBox>
                                        </children>
                                        <VBox.margin>
@@ -142,7 +162,7 @@
                                                 <Insets left="5.0" />
                                              </HBox.margin>
                                           </TextField>
-                                          <Button fx:id="show_usl_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Применить фильтр">
+                                          <Button fx:id="show_usl_b" mnemonicParsing="false" prefWidth="120.0" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Поиск">
                                              <font>
                                                 <Font name="Arial Rounded MT Bold" size="15.0" />
                                              </font>
@@ -152,21 +172,22 @@
                                           </Button>
                                        </children>
                                        <VBox.margin>
-                                          <Insets />
+                                          <Insets top="5.0" />
                                        </VBox.margin>
                                     </HBox>
                                  </children>
+                                 <StackPane.margin>
+                                    <Insets top="10.0" />
+                                 </StackPane.margin>
                               </VBox>
                            </children>
                         </StackPane>
                      </top>
                      <center>
-                        <TableView fx:id="data_table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="550.0" prefWidth="1031.0" BorderPane.alignment="CENTER">
-                          <columns>
-                            <TableColumn fx:id="id_usl" prefWidth="125.0" text="eid" />
-                            <TableColumn fx:id="name_usl" prefWidth="878.0" text="name" />
-                          </columns>
-                        </TableView>
+                        <ListView fx:id="service_list" stylesheets="@listview_style.css" BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets top="20.0" />
+                           </BorderPane.margin></ListView>
                      </center>
                   </BorderPane>
                </content>
@@ -196,7 +217,7 @@
                                                       <Insets bottom="5.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <Button fx:id="download_departm_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Отчёт по ведомствам">
+                                                <Button fx:id="download_departm_b" mnemonicParsing="false" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Отчёт по ведомствам">
                                                    <font>
                                                       <Font name="Arial Rounded MT Bold" size="15.0" />
                                                    </font>
@@ -225,7 +246,7 @@
                                                 <Insets right="5.0" />
                                              </HBox.margin>
                                           </TextField>
-                                          <Button fx:id="show_departm" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Применить фильтр">
+                                          <Button fx:id="show_departm" mnemonicParsing="false" prefWidth="120.0" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Поиск">
                                              <font>
                                                 <Font name="Arial Rounded MT Bold" size="15.0" />
                                              </font>
@@ -236,15 +257,18 @@
                                        </VBox.margin>
                                     </HBox>
                                  </children>
+                                 <StackPane.margin>
+                                    <Insets top="10.0" />
+                                 </StackPane.margin>
                               </VBox>
                            </children>
                         </StackPane>
                      </top>
                      <center>
-                        <TableView fx:id="data_table_departm" editable="true" prefHeight="650.0" prefWidth="1031.0" BorderPane.alignment="CENTER">
+                        <TableView fx:id="data_table_departm" editable="true" prefHeight="650.0" prefWidth="1031.0" stylesheets="@table_style.css" BorderPane.alignment="CENTER">
                            <columns>
-                              <TableColumn fx:id="id_departm" prefWidth="182.0" text="id" />
-                              <TableColumn fx:id="name_departm" prefWidth="821.0" text="name" />
+                              <TableColumn fx:id="id_departm" prefWidth="182.0" styleClass="leftAlignedTableColumnHeader" text="ID" />
+                              <TableColumn fx:id="name_departm" prefWidth="821.0" styleClass="leftAlignedTableColumnHeader" text="Наименование ведомства" />
                            </columns>
                         </TableView>
                      </center>
@@ -284,7 +308,7 @@
                                                       <Insets bottom="5.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <Button fx:id="download_mfc_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Отчёт по МФЦ">
+                                                <Button fx:id="download_mfc_b" mnemonicParsing="false" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Отчёт по МФЦ">
                                                    <font>
                                                       <Font name="Arial Rounded MT Bold" size="15.0" />
                                                    </font>
@@ -313,7 +337,7 @@
                                                 <Insets right="5.0" />
                                              </HBox.margin>
                                           </TextField>
-                                          <Button fx:id="show_mfc_b" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Применить фильтр">
+                                          <Button fx:id="show_mfc_b" mnemonicParsing="false" prefWidth="120.0" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Поиск">
                                              <font>
                                                 <Font name="Arial Rounded MT Bold" size="15.0" />
                                              </font>
@@ -321,15 +345,18 @@
                                        </children>
                                     </HBox>
                                  </children>
+                                 <StackPane.margin>
+                                    <Insets top="10.0" />
+                                 </StackPane.margin>
                               </VBox>
                            </children>
                         </StackPane>
                      </top>
                      <center>
-                        <TableView fx:id="data_table_mfc" editable="true" prefHeight="570.0" prefWidth="1004.0" BorderPane.alignment="CENTER">
+                        <TableView fx:id="data_table_mfc" editable="true" prefHeight="570.0" prefWidth="1004.0" stylesheets="@table_style.css" BorderPane.alignment="CENTER">
                            <columns>
-                              <TableColumn fx:id="id_mfc" prefWidth="125.0" text="id" />
-                              <TableColumn fx:id="name_mfc" prefWidth="878.0" text="name" />
+                              <TableColumn fx:id="id_mfc" prefWidth="125.0" styleClass="leftAlignedTableColumnHeader" text="ID" />
+                              <TableColumn fx:id="name_mfc" prefWidth="878.0" styleClass="leftAlignedTableColumnHeader" text="Наименование МФЦ" />
                            </columns>
                         </TableView>
                      </center>
