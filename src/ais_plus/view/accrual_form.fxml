@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="880.0" prefWidth="550.0" style="-fx-background-color: #D3D3D3;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ais_plus.controller.AccrualFormController">
+<AnchorPane prefHeight="880.0" prefWidth="550.0" style="-fx-background-color: #D7E7FF;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ais_plus.controller.AccrualFormController">
    <children>
       <Label fx:id="accr_label" layoutX="22.0" layoutY="14.0" text="Создание начисления" textFill="DARKSLATEGRAY">
          <font>
@@ -56,8 +56,8 @@
       <Label layoutX="69.0" layoutY="739.0" text="Пречек обязателен" />
       <CheckBox fx:id="preCheckRequired_ch" layoutX="183.0" layoutY="739.0" mnemonicParsing="false" />
       <Label layoutX="101.0" layoutY="775.0" text="*Назначение" />
-      <Button fx:id="add_accul_b" layoutX="367.0" layoutY="838.0" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Добавить" />
-      <Button fx:id="cancel_accul_b" layoutX="451.0" layoutY="838.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="69.0" style="-fx-background-radius: 20;" text="Отмена" />
+      <Button fx:id="add_accul_b" layoutX="326.0" layoutY="836.0" mnemonicParsing="false" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Добавить" />
+      <Button fx:id="cancel_accul_b" layoutX="430.0" layoutY="836.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="87.0" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Отмена" />
       <TextArea fx:id="purpose_t" layoutX="185.0" layoutY="775.0" prefHeight="48.0" prefWidth="327.0" promptText="Введите назначение для платежа" />
       <Label layoutX="133.0" layoutY="505.0" text="*ИНН" />
       <TextField fx:id="inn_t" layoutX="179.0" layoutY="501.0" prefHeight="25.0" prefWidth="327.0" promptText="Введите 10 или 12 цифр" />

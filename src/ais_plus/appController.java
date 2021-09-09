@@ -280,13 +280,12 @@ public class appController {
         }
     }
 
-/*
     // Функция для получения начислений по услуге
     public void Show_accruals(String cookie_value){
         // Устанавлием событие на кнопку "Начисления"
         add_accrual_b.setOnAction(event -> {
             // Если услуга не выбрана, показать предупреждение
-            if (data_table.getSelectionModel().getSelectedItem() == null){
+            if (service_list.getSelectionModel().getSelectedItem() == null){
                 Alert alert =new Alert(Alert.AlertType.WARNING , "Test");
                 alert.setTitle("Услуга не выбрана");
                 alert.setHeaderText("Необходимо выбрать услугу!");
@@ -300,7 +299,7 @@ public class appController {
                 System.out.println("NOT_SELECTED USLUGAAAA");
             } else {
                 // Иначе Получить услугу, получить eid услуги
-                DataUslug_Model dataUslug_model = data_table.getSelectionModel().getSelectedItem();
+                DataUslug_Model dataUslug_model = service_list.getSelectionModel().getSelectedItem();
                 String eid_usl=dataUslug_model.getEidUslug();
                 String lid_usl=dataUslug_model.getLidUslug();
                 System.out.println("GET EID: "+eid_usl+" GET LID: "+lid_usl);
@@ -328,7 +327,7 @@ public class appController {
 
 
         });
-    }*/
+    }
 
 
     // Функция для отображения услуг

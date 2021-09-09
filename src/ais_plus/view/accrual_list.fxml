@@ -8,20 +8,20 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: #D3D3D3;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ais_plus.controller.AccrualController">
+<AnchorPane prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: #D7E7FF;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ais_plus.controller.AccrualController">
    <children>
       <Label layoutX="406.0" layoutY="14.0" text="Начисления" textFill="DARKSLATEGRAY">
          <font>
             <Font name="Arial Rounded MT Bold" size="16.0" />
          </font>
       </Label>
-      <TableView fx:id="accrual_table" layoutX="15.0" layoutY="118.0" prefHeight="574.0" prefWidth="871.0">
+      <TableView fx:id="accrual_table" layoutX="15.0" layoutY="118.0" prefHeight="574.0" prefWidth="871.0" stylesheets="@table_style.css">
         <columns>
           <TableColumn fx:id="id_accrual" prefWidth="126.0" text="id" />
           <TableColumn fx:id="name_accrual" prefWidth="744.0" text="Название" />
         </columns>
       </TableView>
-      <Button fx:id="add_accrual_b" layoutX="270.0" layoutY="80.0" mnemonicParsing="false" prefWidth="104.0" style="-fx-background-radius: 20;" text="Добавить">
+      <Button fx:id="add_accrual_b" layoutX="270.0" layoutY="80.0" mnemonicParsing="false" prefWidth="104.0" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Добавить">
          <font>
             <Font name="Arial Rounded MT Bold" size="14.0" />
          </font>
@@ -32,17 +32,17 @@
             <Font name="Arial Rounded MT Bold" size="16.0" />
          </font>
       </Label>
-      <Button fx:id="dupl_accrual_b" layoutX="382.0" layoutY="80.0" mnemonicParsing="false" style="-fx-background-radius: 20;" text="Дублировать">
+      <Button fx:id="dupl_accrual_b" layoutX="383.0" layoutY="80.0" mnemonicParsing="false" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Дублировать">
          <font>
             <Font name="Arial Rounded MT Bold" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="edit_accrual_b" layoutX="495.0" layoutY="80.0" mnemonicParsing="false" prefWidth="104.0" style="-fx-background-radius: 20;" text="Изменить">
+      <Button fx:id="edit_accrual_b" layoutX="509.0" layoutY="80.0" mnemonicParsing="false" prefWidth="104.0" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Изменить">
          <font>
             <Font name="Arial Rounded MT Bold" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="del_accrual_b" layoutX="608.0" layoutY="80.0" mnemonicParsing="false" prefWidth="104.0" style="-fx-background-radius: 20;" text="Удалить">
+      <Button fx:id="del_accrual_b" layoutX="625.0" layoutY="80.0" mnemonicParsing="false" prefWidth="104.0" styleClass="my-btn-app-class" stylesheets="@button_style.css" text="Удалить">
          <font>
             <Font name="Arial Rounded MT Bold" size="14.0" />
          </font>
