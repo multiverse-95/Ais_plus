@@ -4,11 +4,17 @@ import java.awt.*;
 //import java.awt.TextArea;
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import ais_plus.controller.*;
+import ais_plus.model.Settings_Model;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -472,6 +478,7 @@ public class appController {
         //id_usl.setResizable(false);
         //name_usl.setResizable(false);
         menu_item_rep_service.setDisable(true);
+        service_list.setItems(null);
         //data_table.setItems(null);
         // Запуск ПрогрессИндикатора
         ProgressIndicator pi = new ProgressIndicator();
@@ -479,6 +486,7 @@ public class appController {
         box.setAlignment(Pos.CENTER);
         // Grey Background
         vbox_usl_main.setDisable(true);
+        service_list.setDisable(true);
         /*data_table.setDisable(true);
         Label label_load=new Label();
         label_load.setText("Загрузка данных...");
@@ -499,6 +507,7 @@ public class appController {
                 box.setDisable(true);
                 pi.setVisible(false);
                 vbox_usl_main.setDisable(false);
+                service_list.setDisable(false);
                 //data_table.setDisable(false);
                 menu_item_rep_service.setDisable(false);
                 count_uslAll_t.setText(String.valueOf(parsed_result.getAllUslug())); // Установка количества всех услуг для поля Все услуги
@@ -562,8 +571,38 @@ public class appController {
         // При нажатии на элемент меню "Сменить пользователя"
         menu_item_change_user.setOnAction(event_change_user -> {
             ServiceTask.cancel();
-            app_menuBar.getScene().getWindow().hide();// Скрываем окно авторизации
+            // Считать данные с файла
+            File fileJson = new File("C:\\ais_plus\\settingsAIS.json");
 
+            JsonParser parser = new JsonParser();
+            JsonElement jsontree = null;
+            try {
+                jsontree = parser.parse(new BufferedReader(new InputStreamReader(new FileInputStream("C:\\ais_plus\\settingsAIS.json"), StandardCharsets.UTF_8)));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            // Сохранить путь для сохранения отчёта, остальное удалить
+            JsonObject jsonObject = jsontree.getAsJsonObject();
+            String lastPathToFile = jsonObject.get("lastPathToFile").getAsString();
+            Settings_Model settingsModel = new Settings_Model("", "", "", lastPathToFile, false);
+            settingsModel.setLogin("");
+            settingsModel.setPassword("");
+            settingsModel.setCookie("");
+            settingsModel.setLastPathToFile(lastPathToFile);
+            settingsModel.setCheckBoxSel(false);
+
+            Gson gson = new Gson();
+            String content = gson.toJson(settingsModel);
+            try {
+                Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileJson), StandardCharsets.UTF_8));
+                out.write(content);
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            app_menuBar.getScene().getWindow().hide();// Скрываем окно программы
+            // Запускаем окно авторизации
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/ais_plus/view/login.fxml"));
             try {
@@ -575,7 +614,7 @@ public class appController {
             Stage stage = new Stage();
             stage.setTitle("Ais plus");
             stage.setResizable(false);
-            stage.setScene(new Scene(root, 400, 200));
+            stage.setScene(new Scene(root, 400, 250));
             stage.show();
 
         });
@@ -920,6 +959,11 @@ public class appController {
         appController AppController = loader.getController();
         Stage stage = new Stage();
         FileChooser fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
+        SaveLastPathController saveLastPathController=new SaveLastPathController();
+        String lastPathDirectory= saveLastPathController.getLastDirectory();
+        if (!lastPathDirectory.equals("")){
+            fileChooser.setInitialDirectory(new File(lastPathDirectory));
+        }
         fileChooser.setTitle("Выберите файл exportMfcService");//Заголовок диалога
         FileChooser.ExtensionFilter extFilter =
                 new FileChooser.ExtensionFilter("Excel file (*.xlsx)", "*.xlsx");//Расширение
@@ -1065,6 +1109,11 @@ public class appController {
         //System.out.println(text_test);
         // Создание экземпляр класса FileChooser
         FileChooser fileChooser = new FileChooser();
+        SaveLastPathController saveLastPathController=new SaveLastPathController();
+        String lastPathDirectory= saveLastPathController.getLastDirectory();
+        if (!lastPathDirectory.equals("")){
+            fileChooser.setInitialDirectory(new File(lastPathDirectory));
+        }
 
         // Устанавливаем список расширений для файла
         fileChooser.setInitialFileName("services_DELETED"); // Устанавливаем название для файла
@@ -1159,6 +1208,8 @@ public class appController {
         // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
+        SaveLastPathController saveLastPathController=new SaveLastPathController();
+        saveLastPathController.SaveLastPathInfo(file.getParent());
         return file.getAbsolutePath();
 
     }

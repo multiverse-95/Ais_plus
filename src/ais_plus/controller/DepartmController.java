@@ -1,8 +1,6 @@
 package ais_plus.controller;
 
 import ais_plus.appController;
-import ais_plus.model.DataMfc_Model;
-import ais_plus.model.DataUslug_Model;
 import com.google.gson.*;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
@@ -31,14 +29,12 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -168,7 +164,7 @@ public class DepartmController {
     }
     // Функция для загрузки отчета по ведомствам
     public void Download_departm(ArrayList<DataDepartm_Model> dataDepartm_models_arr) {
-
+            String absolutePathToFile="";
             String text_test=""; // Переменная в которой будет храниться текст отчета
             // Идем по циклу и добавляем в переменную данные о ведомствах
             for (int i=0; i<dataDepartm_models_arr.size(); i++){
@@ -177,7 +173,11 @@ public class DepartmController {
             //System.out.println(text_test);
             // Создаем экземпляр класса FileChooser
             FileChooser fileChooser = new FileChooser();
-
+            SaveLastPathController saveLastPathController=new SaveLastPathController();
+            String lastPathDirectory= saveLastPathController.getLastDirectory();
+            if (!lastPathDirectory.equals("")){
+                fileChooser.setInitialDirectory(new File(lastPathDirectory));
+            }
             // Устанавливаем список расширений для файла
             fileChooser.setInitialFileName("departm_report");// Устанавливаем название для файла
             // Список расширений для Excel
@@ -212,7 +212,12 @@ public class DepartmController {
                     if(file != null){
                         try {
                             // Сохраняем файл
-                            SaveFileExcel(dataDepartm_models_arr, file);
+                            absolutePathToFile=SaveFileExcel(dataDepartm_models_arr, file);
+                            try {
+                                Desktop.getDesktop().open(new File(absolutePathToFile));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -225,7 +230,12 @@ public class DepartmController {
                     if(file != null){
                         try {
                             // Сохраняем файл
-                            SaveFileExcelOldFormat(dataDepartm_models_arr, file);
+                            absolutePathToFile=SaveFileExcelOldFormat(dataDepartm_models_arr, file);
+                            try {
+                                Desktop.getDesktop().open(new File(absolutePathToFile));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -268,7 +278,7 @@ public class DepartmController {
         return style;
     }
     // Функция сохранения файла в Excel старый формат
-    public void SaveFileExcelOldFormat (ArrayList<DataDepartm_Model> dataDepartm_model_arr, File file) throws IOException {
+    public String SaveFileExcelOldFormat (ArrayList<DataDepartm_Model> dataDepartm_model_arr, File file) throws IOException {
         // Создание книги Excel
         HSSFWorkbook workbook = new HSSFWorkbook();
         // Создание листа
@@ -315,6 +325,9 @@ public class DepartmController {
         // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
+        SaveLastPathController saveLastPathController=new SaveLastPathController();
+        saveLastPathController.SaveLastPathInfo(file.getParent());
+        return file.getAbsolutePath();
 
     }
     // Функция для установки стилей Excel
@@ -326,7 +339,7 @@ public class DepartmController {
         return style;
     }
     // Функция сохранения файла в Excel
-    public void SaveFileExcel (ArrayList<DataDepartm_Model> dataDepartm_model_arr, File file) throws IOException {
+    public String SaveFileExcel (ArrayList<DataDepartm_Model> dataDepartm_model_arr, File file) throws IOException {
         // Создание книги Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
         // Создание листа
@@ -373,6 +386,9 @@ public class DepartmController {
         // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
+        SaveLastPathController saveLastPathController=new SaveLastPathController();
+        saveLastPathController.SaveLastPathInfo(file.getParent());
+        return file.getAbsolutePath();
 
     }
 

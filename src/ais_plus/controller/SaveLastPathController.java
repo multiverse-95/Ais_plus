@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 public class SaveLastPathController {
 
     // Функция для сохранения последнего пути файла
-    public static void SaveLastPathInfo(String lastPathToFile) throws IOException {
+    public void SaveLastPathInfo(String lastPathToFile) throws IOException {
         // Путь к файлу
         File fileJson = new File("C:\\ais_plus\\settingsAIS.json");
         // Проверяем, существует ли файл

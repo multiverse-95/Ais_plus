@@ -54,6 +54,5 @@
     </orderEntry>
     <orderEntry type="library" name="org.apache.poi:poi:4.0.0" level="project" />
     <orderEntry type="library" name="org.apache.poi:poi-ooxml:4.0.0" level="project" />
-    <orderEntry type="library" name="jfxtras.jmetro" level="project" />
   </component>
 </module>

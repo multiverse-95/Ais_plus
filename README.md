@@ -5,15 +5,15 @@
 Также одно из важных функций - добавление начислений для услуги. Можно создавать, изменять, а главное дублировать начисления для услуги. Это позволяет сэкономить время при добавлении новых начислений.
 
 ### Услуги:
-![Alt text](/src/ais_plus/screenshots/Services.PNG "Скриншот услуг")
+![Alt text](/src/ais_plus/screenshots/Services_new.PNG "Скриншот услуг")
 ### Ведомства:
-![Alt text](/src/ais_plus/screenshots/Departments.PNG "Скриншот ведомств")
+![Alt text](/src/ais_plus/screenshots/Departments_new.PNG "Скриншот ведомств")
 ### Список МФЦ:
-![Alt text](/src/ais_plus/screenshots/Mfc.PNG "Скриншот МФЦ")
+![Alt text](/src/ais_plus/screenshots/Mfc_new.PNG "Скриншот МФЦ")
 ### Начисления:
-![Alt text](/src/ais_plus/screenshots/Accruals.PNG "Скриншот начислений")
+![Alt text](/src/ais_plus/screenshots/Accruals_new.PNG "Скриншот начислений")
 ### Форма начислений:
-![Alt text](/src/ais_plus/screenshots/CreateAccrual.PNG "Скриншот формы начислений")
+![Alt text](/src/ais_plus/screenshots/CreateAccrual_new.PNG "Скриншот формы начислений")
 ### Сохранение отчёта по услугам:
 ![Alt text](/src/ais_plus/screenshots/ServicesDownload.PNG "Скриншот сохранения отчёта по услугам")
 ### Отчёт по услугам:

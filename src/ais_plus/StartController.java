@@ -10,6 +10,7 @@ import ais_plus.controller.MfcController;
 import ais_plus.model.DataMfc_Model;
 import ais_plus.model.Login_Model;
 import ais_plus.model.Settings_Model;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -306,7 +307,7 @@ public class StartController {
             HttpClientBuilder builder = HttpClientBuilder.create().setDefaultCookieStore(httpCookieStore);
             httpClient = builder.build();
             //String getUrl       = "http://10.42.200.207/api/rs/reports/list";// Сервер авторизации
-            String getUrl       = "AIS_URL";// Сервер авторизации!!!!!
+            String getUrl       = "http://192.168.99.91/cpgu/action/getMfcs?_dc=1631065722349&showClosed=true&page=1&start=0&limit=500&sort=%5B%7B%22property%22%3A%22code%22%2C%22direction%22%3A%22ASC%22%7D%5D";// Сервер авторизации!!!!!
             HttpGet httpGet = new HttpGet(getUrl);
             httpGet.setHeader("Content-type", "application/json");
             httpGet.addHeader("Cookie","JSESSIONID="+cookie);
@@ -315,6 +316,8 @@ public class StartController {
             HttpEntity entity = response.getEntity();
             String result_of_req = EntityUtils.toString(entity); // Получаем результат запроса
 
+
+
             int status_code= response.getStatusLine().getStatusCode(); // Получаем код ответа от сервера
             System.out.println("Status cookie autor: "+status_code);
             boolean CookieValid;
@@ -322,6 +325,9 @@ public class StartController {
             switch (status_code){
                 case 200:
                     CookieValid=true;
+                    boolean isJsonValid=isJSONValid(result_of_req);
+                    System.out.println("JSON and cookie Valid? "+isJsonValid);
+                    if (!isJsonValid) cookie="";
                     break;
                 case 401: // Если выбраны организации
                     CookieValid=false;
@@ -335,6 +341,16 @@ public class StartController {
         }
 
         return cookie; // Возвращаем значение куки
+    }
+
+    public static boolean isJSONValid(String jsonInString) {
+        Gson gson = new Gson();
+        try {
+            gson.fromJson(jsonInString, Object.class);
+            return true;
+        } catch(com.google.gson.JsonSyntaxException ex) {
+            return false;
+        }
     }
 
     public void Login_Ais(boolean isCheckBoxSel){
@@ -415,6 +431,7 @@ public class StartController {
                         stage.setTitle("Ais Plus");
                         //stage.setResizable(false);
                         stage.setScene(new Scene(root));
+                        ((Stage) stage.getScene().getWindow()).setMaximized(true);
                         stage.showAndWait();
 
 
@@ -482,6 +499,7 @@ public class StartController {
         stage.setTitle("Ais Plus");
         //stage.setResizable(false);
         stage.setScene(new Scene(root));
+        ((Stage) stage.getScene().getWindow()).setMaximized(true);
         stage.showAndWait();
     }
 

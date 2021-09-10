@@ -29,6 +29,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -215,7 +216,7 @@ public class ServiceController {
     }
     // Функция для загрузки отчета по услугам
     public void Download_uslugs(ArrayList<DataUslug_Model> dataUslug_models_arr) {
-
+            String absolutePathToFile="";
             String text_test=""; // Переменная в которой будет храниться текст отчета
             // Идем по циклу и добавляем в переменную данные об услугах
             for (int i=0; i<dataUslug_models_arr.size(); i++){
@@ -224,6 +225,12 @@ public class ServiceController {
             //System.out.println(text_test);
             // Создание экземпляр класса FileChooser
             FileChooser fileChooser = new FileChooser();
+
+            SaveLastPathController saveLastPathController=new SaveLastPathController();
+            String lastPathDirectory= saveLastPathController.getLastDirectory();
+            if (!lastPathDirectory.equals("")){
+                fileChooser.setInitialDirectory(new File(lastPathDirectory));
+            }
 
             // Устанавливаем список расширений для файла
             fileChooser.setInitialFileName("service_report"); // Устанавливаем название для файла
@@ -259,7 +266,12 @@ public class ServiceController {
                     if(file != null){
                         try {
                             // Сохраняем файл
-                            SaveFileExcel(dataUslug_models_arr, file);
+                            absolutePathToFile=SaveFileExcel(dataUslug_models_arr, file);
+                            try {
+                                Desktop.getDesktop().open(new File(absolutePathToFile));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -272,7 +284,12 @@ public class ServiceController {
                         if(file != null){
                             try {
                                 // Сохраняем файл
-                                SaveFileExcelOldFormat(dataUslug_models_arr, file);
+                                absolutePathToFile=SaveFileExcelOldFormat(dataUslug_models_arr, file);
+                                try {
+                                    Desktop.getDesktop().open(new File(absolutePathToFile));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -315,7 +332,7 @@ public class ServiceController {
         return style;
     }
     // Функция сохранения файла в Excel старый формат
-    public void SaveFileExcelOldFormat (ArrayList<DataUslug_Model> dataUslug_model_arr, File file) throws IOException {
+    public String SaveFileExcelOldFormat (ArrayList<DataUslug_Model> dataUslug_model_arr, File file) throws IOException {
         // Создание книги Excel
         HSSFWorkbook workbook = new HSSFWorkbook();
         // Создание листа
@@ -362,6 +379,9 @@ public class ServiceController {
         // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
+        SaveLastPathController saveLastPathController=new SaveLastPathController();
+        saveLastPathController.SaveLastPathInfo(file.getParent());
+        return file.getAbsolutePath();
 
     }
     // Функция для установки стилей Excel
@@ -374,7 +394,7 @@ public class ServiceController {
     }
 
     // Функция сохранения файла в Excel
-    public void SaveFileExcel (ArrayList<DataUslug_Model> dataUslug_model_arr, File file) throws IOException {
+    public String SaveFileExcel (ArrayList<DataUslug_Model> dataUslug_model_arr, File file) throws IOException {
         // Создание книги Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
         // Создание листа
@@ -421,6 +441,9 @@ public class ServiceController {
         // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
+        SaveLastPathController saveLastPathController=new SaveLastPathController();
+        saveLastPathController.SaveLastPathInfo(file.getParent());
+        return file.getAbsolutePath();
 
     }
     // Класс для возвращения списка услуг, кол-во всех услуг, и кол-во актуальных услуг

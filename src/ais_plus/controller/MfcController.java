@@ -1,7 +1,6 @@
 package ais_plus.controller;
 
 import ais_plus.appController;
-import ais_plus.model.DataUslug_Model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -31,6 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -120,7 +120,7 @@ public class MfcController {
     // Функция для загрузки отчета по мфц
     public void Download_mfc(ArrayList<DataMfc_Model> dataMfc_model_arr) {
 
-
+            String absolutePathToFile="";
             String text_test=""; // Переменная в которой будет храниться текст отчета
             // Идем по циклу и добавляем в переменную данные о мфц
             for (int i=0; i<dataMfc_model_arr.size(); i++){
@@ -128,7 +128,11 @@ public class MfcController {
             }
             // Создаем экземпляр класса FileChooser
             FileChooser fileChooser = new FileChooser();
-
+            SaveLastPathController saveLastPathController=new SaveLastPathController();
+            String lastPathDirectory= saveLastPathController.getLastDirectory();
+            if (!lastPathDirectory.equals("")){
+                fileChooser.setInitialDirectory(new File(lastPathDirectory));
+            }
             // Устанавливаем список расширений для файла
             fileChooser.setInitialFileName("mfc_report"); // Устанавливаем название для файла
             // Список расширений для Excel
@@ -163,7 +167,12 @@ public class MfcController {
                     if(file != null){
                         try {
                             // Сохраняем файл
-                            SaveFileExcel(dataMfc_model_arr, file);
+                            absolutePathToFile=SaveFileExcel(dataMfc_model_arr, file);
+                            try {
+                                Desktop.getDesktop().open(new File(absolutePathToFile));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -176,7 +185,12 @@ public class MfcController {
                     if(file != null){
                         try {
                             // Сохраняем файл
-                            SaveFileExcelOldFormat(dataMfc_model_arr, file);
+                            absolutePathToFile=SaveFileExcelOldFormat(dataMfc_model_arr, file);
+                            try {
+                                Desktop.getDesktop().open(new File(absolutePathToFile));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -218,7 +232,7 @@ public class MfcController {
         return style;
     }
     // Функция сохранения файла в Excel старый формат
-    public void SaveFileExcelOldFormat (ArrayList<DataMfc_Model> dataMfc_model_arr, File file) throws IOException {
+    public String SaveFileExcelOldFormat (ArrayList<DataMfc_Model> dataMfc_model_arr, File file) throws IOException {
         // Создание книги Excel
         HSSFWorkbook workbook = new HSSFWorkbook();
         // Создание листа
@@ -265,6 +279,9 @@ public class MfcController {
         // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
+        SaveLastPathController saveLastPathController=new SaveLastPathController();
+        saveLastPathController.SaveLastPathInfo(file.getParent());
+        return file.getAbsolutePath();
 
     }
     // Функция для установки стилей Excel
@@ -276,7 +293,7 @@ public class MfcController {
         return style;
     }
     // Функция сохранения файла в Excel
-    public void SaveFileExcel (ArrayList<DataMfc_Model> dataMfc_model_arr, File file) throws IOException {
+    public String SaveFileExcel (ArrayList<DataMfc_Model> dataMfc_model_arr, File file) throws IOException {
         // Создание книги Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
         // Создание листа
@@ -323,6 +340,9 @@ public class MfcController {
         // Закрытие потока записи
         outFile.close();
         System.out.println("Created file: " + file.getAbsolutePath());
+        SaveLastPathController saveLastPathController=new SaveLastPathController();
+        saveLastPathController.SaveLastPathInfo(file.getParent());
+        return file.getAbsolutePath();
 
     }
     // Класс для возвращения списка мфц, кол-во всех мфц
