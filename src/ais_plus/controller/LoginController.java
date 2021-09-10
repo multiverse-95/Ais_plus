@@ -1,7 +1,11 @@
 package ais_plus.controller;
 
 import ais_plus.appController;
+import ais_plus.model.Settings_Model;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,7 +23,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import ais_plus.model.Login_Model;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +34,12 @@ public class LoginController {
      public static class LoginTask extends Task<String> {
         private final String username;
         private final String password;
+        private final boolean isCheckBoxSel; // Флаг чекбокса
 
-        public LoginTask(String username, String password) {
+        public LoginTask(String username, String password, boolean isCheckBoxSel) {
             this.username = username;
             this.password =password;
+            this.isCheckBoxSel=isCheckBoxSel;
         }
         @Override
         protected String call() throws Exception {
@@ -41,6 +48,7 @@ public class LoginController {
                 System.out.println("YES!");
                 Autoriz2(username,password, cookie);
                 Get_admin_role(cookie);
+                SaveAutoriz(username, password, cookie, isCheckBoxSel);
 
             } else {
                 System.out.println("NO!");
@@ -104,7 +112,7 @@ public class LoginController {
         //return payl;
 
     }
-    // Функция для получение прав администратора
+    // Функция для получения прав администратора
     public static String Get_admin_role(String cookie) throws IOException {
         // Установка cookie по-умолчанию
         CookieStore httpCookieStore = new BasicCookieStore();
@@ -181,6 +189,66 @@ public class LoginController {
 
         return result_of_req; // Возвращаем последний результат выполнения запроса
         //return payload_admin_arr;
+    }
+
+    // Функция для сохранения данных по авторизации
+    private static void SaveAutoriz(String login, String password, String cookie , boolean isCheckBoxSel){
+        // Получаем логин, пароль, куки, флаг чекбокса
+        Settings_Model settingsModel=new Settings_Model(login, password, cookie,"", isCheckBoxSel);
+        settingsModel.setLogin(login);
+        settingsModel.setPassword(password);
+        settingsModel.setCookie(cookie);
+        settingsModel.setCheckBoxSel(isCheckBoxSel);
+        Gson gson = new Gson();
+        //StringEntity postingString = new StringEntity(gson.toJson(settingsModel), StandardCharsets.UTF_8);//gson.tojson() converts your payload to json
+        System.out.println("json settings: "+ gson.toJson(settingsModel));
+        // Создаем файл с настройками
+        File f = new File("C:\\ais_plus");
+        try{
+            if(f.mkdir()) {
+                System.out.println("Directory Created");
+                String content=gson.toJson(settingsModel);
+                File file=new File("C:\\ais_plus\\settingsAIS.json");
+                Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+                out.write(content);
+                out.close();
+            } else {
+                System.out.println("Directory is not created");
+                SaveSettings(login, password, cookie, isCheckBoxSel);
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    // Функция для сохранения настроек
+    public static void SaveSettings(String login, String password, String cookie, boolean isCheckBoxSel) throws IOException {
+        // Путь к файлу
+        File fileJson = new File("C:\\ais_plus\\settingsAIS.json");
+        JsonParser parser = new JsonParser();
+        JsonElement jsontree = null;
+        try {
+            jsontree = parser.parse(new BufferedReader(new InputStreamReader(new FileInputStream("C:\\ais_plus\\settingsAIS.json"), StandardCharsets.UTF_8)));
+            //jsontree = parser.parse(new FileReader("C:\\pkpvdplus\\settingsPVD.json"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        // Парсим данные
+        JsonObject jsonObject = jsontree.getAsJsonObject();
+        String lastPathToFile = jsonObject.get("lastPathToFile").getAsString();
+        Settings_Model settingsModel = new Settings_Model(login, password, cookie, lastPathToFile, isCheckBoxSel);
+        settingsModel.setLogin(login);
+        settingsModel.setPassword(password);
+        settingsModel.setCookie(cookie);
+        settingsModel.setLastPathToFile(lastPathToFile);
+        settingsModel.setCheckBoxSel(isCheckBoxSel);
+        // Сохраняем настройки
+        Gson gson = new Gson();
+        String content = gson.toJson(settingsModel);
+        Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileJson), StandardCharsets.UTF_8));
+        out.write(content);
+        out.close();
+
     }
 
 }
